@@ -1,6 +1,6 @@
 <div align="center">
 
-# Plan Card
+# desktop-plan-widget 桌面部件小计划
 
 **A Windows desktop plan widget — frameless, always visible on your wallpaper,
 never covers your work.**
