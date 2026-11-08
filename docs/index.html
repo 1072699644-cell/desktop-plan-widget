@@ -5,267 +5,614 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plan Card — a desktop sticky note for plans on Windows</title>
 <meta name="description" content="A frameless Windows desktop sticky note for plans: daily check-ins with streaks, staged goals with calendar deadlines, an auto-generated self-review and 5 themes. One Python file, zero dependencies, no account.">
+<meta name="theme-color" content="#080B11">
 <link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/">
+
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/">
 <meta property="og:title" content="Plan Card — a desktop sticky note for plans on Windows">
 <meta property="og:description" content="Daily check-ins with streaks, staged goals with deadlines, auto self-review, 5 themes. One Python file, zero dependencies, local JSON.">
-<meta property="og:image" content="shots/social-preview.png">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Plan Card — a frameless desktop plan card on Windows">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Plan Card — a desktop sticky note for plans">
 <meta name="twitter:description" content="Frameless Windows desktop plan card. Zero dependencies, one file.">
-<meta name="twitter:image" content="shots/social-preview.png">
+<meta name="twitter:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:image:alt" content="Plan Card — a frameless desktop plan card on Windows">
+
 <style>
-  :root{
-    --bg:#0b1018; --panel:#121722; --line:#222b3a;
-    --fg:#eef4ff; --sub:#93a3ba; --dim:#5f7188;
-    --acc:#e7c18a; --ok:#6fd39a; --cyan:#00e5ff;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0;background:var(--bg);color:var(--fg);
-    font:16px/1.65 "Segoe UI",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:var(--acc);text-decoration:none}
-  a:hover{text-decoration:underline}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-  header{border-bottom:1px solid var(--line)}
-  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
-  .dot{width:9px;height:9px;border-radius:2px;background:var(--acc)}
-  .nav a{color:var(--sub);font-size:14px;margin-left:20px}
-  .nav a:hover{color:var(--fg)}
-  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 0 56px}
-  h1{font-size:44px;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px}
-  .lead{font-size:19px;color:var(--sub);margin:0 0 26px}
-  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
-  .badge{font-size:12px;color:var(--sub);border:1px solid var(--line);
-         border-radius:999px;padding:4px 12px;background:var(--panel)}
-  .cta{display:flex;flex-wrap:wrap;gap:12px}
-  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:600;font-size:15px}
-  .btn.p{background:var(--acc);color:#20160a}
-  .btn.p:hover{text-decoration:none;filter:brightness(1.06)}
-  .btn.s{border:1px solid var(--line);color:var(--fg);background:transparent}
-  .btn.s:hover{text-decoration:none;background:var(--panel)}
-  .shot{text-align:center}
-  .shot img{width:100%;max-width:380px;border-radius:14px;
-            box-shadow:0 24px 60px rgba(0,0,0,.55)}
-  section{padding:56px 0;border-top:1px solid var(--line)}
-  h2{font-size:26px;margin:0 0 8px;letter-spacing:-.2px}
-  .sub{color:var(--sub);margin:0 0 32px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
-  .card h3{margin:0 0 8px;font-size:16px}
-  .card p{margin:0;color:var(--sub);font-size:14.5px}
-  .card .k{display:inline-block;font-size:12px;color:var(--acc);
-           border:1px solid #3a3222;border-radius:6px;padding:1px 7px;margin-bottom:10px}
-  .wide{text-align:center;margin-top:8px}
-  .wide img{width:100%;border-radius:14px;border:1px solid var(--line)}
-  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:14px}
-  ol.steps li{position:relative;padding:18px 20px 18px 60px;background:var(--panel);
-              border:1px solid var(--line);border-radius:12px;color:var(--sub)}
-  ol.steps li::before{counter-increment:s;content:counter(s);
-    position:absolute;left:18px;top:18px;width:26px;height:26px;border-radius:50%;
-    background:var(--acc);color:#20160a;font-weight:700;font-size:14px;
-    display:flex;align-items:center;justify-content:center}
-  ol.steps b{color:var(--fg);font-weight:600}
-  pre{background:#0e131c;border:1px solid var(--line);border-radius:10px;
-      padding:14px 16px;overflow:auto;font-size:14px;color:#cfe0f5;margin:12px 0 0}
-  code{font-family:ui-monospace,Consolas,"Courier New",monospace}
-  details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;
-          margin-bottom:10px;background:var(--panel)}
-  summary{cursor:pointer;font-weight:600;color:var(--fg)}
-  details p{color:var(--sub);margin:10px 0 0;font-size:14.5px}
-  footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--dim);font-size:14px}
-  .foot{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between}
-  .lang{float:right;font-size:13px;color:var(--dim);cursor:pointer;
-        border:1px solid var(--line);border-radius:8px;padding:3px 10px;background:var(--panel)}
-  .zh{display:none}
-  body.cn .zh{display:revert}
-  body.cn .en{display:none}
-  @media (max-width:820px){
-    .hero{grid-template-columns:1fr;padding:48px 0 40px;gap:32px}
-    h1{font-size:34px}
-  }
+:root{
+  /* surface */
+  --bg:#080B11;
+  --bg-2:#0A0E15;
+  --surface:#111823;
+  --surface-2:#161F2B;
+  --line:#1D2734;
+  --line-2:#2A3648;
+  /* text */
+  --fg:#E9EFF7;
+  --muted:#9AA8BC;
+  --dim:#66758B;
+  /* one accent only */
+  --accent:#E7C18A;
+  --accent-hi:#F3D6AC;
+  --on-accent:#231808;
+  /* scale */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px;
+  --s8:32px; --s12:48px; --s16:64px; --s24:96px;
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:26px;
+  --shadow-1:0 1px 2px rgb(0 0 0 / .3);
+  --shadow-2:0 8px 24px rgb(0 0 0 / .34);
+  --shadow-3:0 24px 70px rgb(0 0 0 / .55);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --dur:170ms;
+  --wrap:1120px;
+  --pad:clamp(20px,5vw,24px);
+  --sect:clamp(56px,8vw,104px);
+  --font:"Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Roboto,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--font);font-size:16px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent);text-decoration:none;transition:color var(--dur) var(--ease)}
+a:hover{color:var(--accent-hi)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r-sm)}
+.wrap{width:100%;max-width:var(--wrap);margin:0 auto;padding:0 var(--pad)}
+code{font-family:var(--mono);font-size:.9em;color:#CFE0F5;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:5px;
+  padding:.1em .38em;white-space:nowrap}
+
+/* ---------- language ----------
+   只在「非当前语言」时隐藏，避免 .zh{display:none} 被组件的 display 规则覆盖；
+   用 :not(.cn) 提高权重，且不干预当前语言元素的自身 display。 */
+body:not(.cn) .zh{display:none}
+body.cn .en{display:none}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--bg) 84%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+  backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;
+  gap:var(--s4);height:62px}
+.brand{display:flex;align-items:center;gap:10px;
+  font-weight:650;letter-spacing:.2px;font-size:15px;color:var(--fg)}
+.brand:hover{color:var(--fg)}
+.mark{width:17px;height:17px;border-radius:5px;
+  background:linear-gradient(150deg,var(--accent-hi),var(--accent) 55%,#B98C4B);
+  box-shadow:0 0 0 3px rgb(231 193 138 / .1)}
+.nav-links{display:flex;align-items:center;gap:var(--s6)}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500}
+.nav-links a:hover{color:var(--fg)}
+.langsw{background:var(--surface);border:1px solid var(--line);
+  color:var(--muted);font:inherit;font-size:13px;font-weight:600;
+  padding:6px 13px;min-height:32px;border-radius:var(--r-sm);cursor:pointer;
+  transition:background var(--dur) var(--ease),color var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.langsw:hover{background:var(--surface-2);color:var(--fg);border-color:var(--line-2)}
+.langsw:active{transform:translateY(1px)}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.08fr .92fr;
+  gap:clamp(var(--s8),5vw,var(--s16));align-items:center;
+  padding:clamp(40px,7vw,86px) 0 clamp(40px,6vw,72px)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);margin:0 0 var(--s4)}
+.eyebrow b{color:var(--accent);font-weight:600}
+h1{margin:0 0 var(--s4);font-size:clamp(29px,4.2vw,49px);line-height:1.12;
+  letter-spacing:-.028em;font-weight:680}
+body.cn h1{letter-spacing:-.008em;line-height:1.2}
+.lead{margin:0 0 var(--s6);font-size:clamp(16px,1.5vw,18.5px);
+  line-height:1.58;color:var(--muted);max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s6)}
+.btn{display:inline-flex;align-items:center;justify-content:center;
+  gap:var(--s2);min-height:46px;padding:0 var(--s6);border-radius:10px;
+  font-size:15px;font-weight:620;letter-spacing:.01em;cursor:pointer;
+  border:1px solid transparent;transition:all var(--dur) var(--ease)}
+.btn.p{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 20px rgb(231 193 138 / .16)}
+.btn.p:hover{background:var(--accent-hi);color:var(--on-accent);
+  box-shadow:0 8px 26px rgb(231 193 138 / .26);transform:translateY(-1px)}
+.btn.p:active{transform:translateY(0);box-shadow:0 3px 10px rgb(231 193 138 / .18)}
+.btn.s{background:transparent;border-color:var(--line-2);color:var(--fg)}
+.btn.s:hover{background:var(--surface);border-color:#3A4A61;color:var(--fg);transform:translateY(-1px)}
+.btn.s:active{transform:translateY(0)}
+.trust{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s6);
+  font-size:13px;color:var(--dim)}
+.trust span{display:inline-flex;align-items:center;gap:6px}
+
+.shot{position:relative;display:flex;justify-content:center}
+.shot::before{content:"";position:absolute;inset:-8% -14% -6%;
+  background:radial-gradient(60% 55% at 50% 42%,rgb(231 193 138 / .13),transparent 70%);
+  z-index:0;pointer-events:none}
+.shot img{position:relative;z-index:1;width:100%;max-width:352px;
+  aspect-ratio:380/543;object-fit:cover;object-position:top;
+  border-radius:var(--r-lg);border:1px solid var(--line-2);
+  box-shadow:var(--shadow-3)}
+
+/* ---------- numbers strip ---------- */
+.strip{border-block:1px solid var(--line);background:var(--bg-2)}
+.strip-in{display:grid;grid-template-columns:repeat(4,1fr);padding:var(--s6) 0}
+.stat{padding:0 var(--s3);border-left:1px solid var(--line)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat b{display:block;font-size:26px;font-weight:680;letter-spacing:-.02em;
+  line-height:1.1;color:var(--accent)}
+.stat span{display:block;font-size:13px;color:var(--dim);margin-top:var(--s1)}
+
+/* ---------- sections ---------- */
+section{padding:var(--sect) 0}
+.sect-head{max-width:44em;margin-bottom:clamp(var(--s8),4vw,var(--s12))}
+h2{margin:0 0 var(--s3);font-size:clamp(23px,3vw,32px);line-height:1.22;
+  letter-spacing:-.022em;font-weight:660}
+.sub{margin:0;color:var(--muted);font-size:clamp(15px,1.3vw,17px);line-height:1.6}
+
+/* ---------- cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:var(--s4)}
+.card{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:var(--s6);
+  transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.card:hover{border-color:var(--line-2);background:var(--surface-2);transform:translateY(-2px)}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  background:rgb(231 193 138 / .07);border:1px solid rgb(231 193 138 / .22);
+  border-radius:5px;padding:2px 7px;margin-bottom:var(--s3)}
+.card h3{margin:0 0 var(--s2);font-size:16px;font-weight:640;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.6}
+
+/* ---------- themes gallery ---------- */
+.themes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s3);
+  margin-top:var(--s2)}
+.th{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.th img{width:100%;aspect-ratio:396/566;object-fit:cover;object-position:top;
+  border-radius:var(--r-md);border:1px solid var(--line-2);
+  box-shadow:var(--shadow-2);
+  transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+.th:hover img{transform:translateY(-4px);box-shadow:var(--shadow-3);border-color:#40506A}
+.th b{display:block;font-size:13.5px;font-weight:640;letter-spacing:.01em}
+.th span{display:block;font-size:12.5px;color:var(--dim);line-height:1.5;margin-top:2px}
+
+/* ---------- split ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(var(--s8),5vw,var(--s16));align-items:center}
+.split-media{min-width:0}
+.split.rev .split-media{order:-1}
+.split h2{font-size:clamp(22px,2.7vw,30px)}
+.split p{color:var(--muted);font-size:16px;margin:0 0 var(--s4)}
+.split p:last-child{margin-bottom:0}
+.ticks{list-style:none;margin:var(--s6) 0 0;padding:0;display:grid;gap:var(--s3)}
+.ticks li{position:relative;padding-left:var(--s6);color:var(--muted);font-size:15px}
+.ticks li::before{content:"";position:absolute;left:0;top:.55em;
+  width:11px;height:6px;border-left:1.6px solid var(--accent);
+  border-bottom:1.6px solid var(--accent);transform:rotate(-45deg);border-radius:1px}
+.split-media img{width:100%;border-radius:var(--r-md);
+  border:1px solid var(--line-2);box-shadow:var(--shadow-2)}
+
+/* ---------- table ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:560px;font-size:14.5px}
+th,td{padding:var(--s4) var(--s6);text-align:left;
+  border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+thead th{font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--dim);font-weight:600;background:var(--bg-2)}
+thead th:nth-child(2){color:var(--accent)}
+tbody td:first-child{color:var(--fg);font-weight:520;width:38%}
+tbody td{color:var(--muted)}
+td.y{color:var(--fg)}
+td.y::before{content:"Yes";display:inline-block;min-width:2.6em;
+  font-size:12px;color:var(--accent);font-weight:600}
+td.n::before{content:"No";display:inline-block;min-width:2.6em;
+  font-size:12px;color:var(--dim);font-weight:600}
+body.cn td.y::before{content:"有"}
+body.cn td.n::before{content:"无"}
+
+/* ---------- why ---------- */
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:var(--s8) var(--s6)}
+.why div{border-top:1px solid var(--line-2);padding-top:var(--s4)}
+.why em{display:block;font-family:var(--mono);font-size:12px;font-style:normal;
+  color:var(--accent);letter-spacing:.1em;margin-bottom:var(--s3)}
+.why h3{margin:0 0 var(--s2);font-size:16px;font-weight:640}
+.why p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.6}
+
+/* ---------- install ---------- */
+.steps{counter-reset:s;list-style:none;padding:0;margin:0 0 var(--s6);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--s4)}
+.steps li{position:relative;padding:var(--s6) var(--s6) var(--s6) var(--s16);
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  color:var(--muted);font-size:14.5px;line-height:1.6}
+.steps li::before{counter-increment:s;content:counter(s);
+  position:absolute;left:var(--s6);top:var(--s6);
+  width:22px;height:22px;border-radius:50%;background:var(--accent);
+  color:var(--on-accent);font-weight:700;font-size:12px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
+.steps b{display:block;color:var(--fg);font-weight:620;margin-bottom:2px}
+pre{margin:0;background:var(--bg-2);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:var(--s4) var(--s6);overflow-x:auto;
+  font-family:var(--mono);font-size:13.5px;line-height:1.75;color:#CFE0F5}
+pre code{background:none;border:0;padding:0;white-space:pre;font-size:inherit}
+
+/* ---------- faq ---------- */
+.faq{display:grid;gap:var(--s2);max-width:56em}
+details{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:var(--s4) var(--s6);
+  transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+details:hover{border-color:var(--line-2)}
+details[open]{background:var(--surface-2);border-color:var(--line-2)}
+summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--fg);
+  list-style:none;display:flex;justify-content:space-between;
+  align-items:center;gap:var(--s4);min-height:24px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);font-size:17px;
+  color:var(--accent);line-height:1;transition:transform var(--dur) var(--ease)}
+details[open] summary::after{content:"−"}
+details p{margin:var(--s3) 0 0;color:var(--muted);font-size:14.5px;line-height:1.65}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);background:var(--bg-2);
+  padding:var(--s12) 0 var(--s16);color:var(--dim);font-size:14px}
+.foot{display:flex;flex-wrap:wrap;gap:var(--s4) var(--s8);
+  justify-content:space-between;align-items:flex-start}
+.foot-l{max-width:30em;line-height:1.7}
+.foot-r{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s6)}
+.foot-r a{color:var(--muted);font-size:14px}
+.foot-r a:hover{color:var(--fg)}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero{grid-template-columns:1fr;gap:var(--s12)}
+  .shot{order:-1}
+  .shot img{max-width:300px}
+  .split{grid-template-columns:1fr;gap:var(--s8)}
+  .split.rev .split-media{order:0}
+  .strip-in{grid-template-columns:repeat(2,1fr);gap:var(--s6) 0}
+  .stat:nth-child(3){border-left:0;padding-left:0}
+}
+@media (max-width:820px){
+  .themes{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+    gap:var(--s3);margin-inline:calc(var(--pad) * -1);
+    padding:0 var(--pad) var(--s3);scrollbar-width:thin}
+  .th{flex:0 0 62%;scroll-snap-align:start}
+  .nav-links a:not(.langsw){display:none}
+  .why{gap:var(--s6)}
+}
+@media (max-width:520px){
+  h1{letter-spacing:-.02em}
+  .eyebrow{font-size:11px;letter-spacing:.05em}
+  .cta{flex-direction:column;align-items:stretch}
+  .btn{width:100%}
+  .th{flex-basis:76%}
+  .foot{flex-direction:column}
+  th,td{padding:var(--s3) var(--s4)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
 </style>
 </head>
 <body>
+
 <header>
   <div class="wrap nav">
-    <div class="brand"><span class="dot"></span>Plan Card</div>
-    <nav>
-      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    <a class="brand" href="#top"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="#themes" class="en">Themes</a><a href="#themes" class="zh">主题</a>
       <a href="#install" class="en">Install</a><a href="#install" class="zh">安装</a>
       <a href="#faq" class="en">FAQ</a><a href="#faq" class="zh">常见问题</a>
-      <span class="lang" id="langBtn">中文</span>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <button class="langsw" id="langBtn" type="button" aria-pressed="false">中文</button>
     </nav>
   </div>
 </header>
 
-<main>
-<div class="wrap">
-  <div class="hero">
-    <div>
-      <h1 class="en">A desktop sticky note<br>for plans</h1>
-      <h1 class="zh">一张贴在桌面上的便签<br>但它是四段计划</h1>
-      <p class="lead en">Frameless, always visible on your wallpaper, and it never
-        covers your work. One Python file, zero dependencies, no account.</p>
-      <p class="lead zh">无边框、一直看得见、不挡任何窗口。单个 Python 文件，
-        零第三方依赖，不需要账号。</p>
-      <div class="badges">
-        <span class="badge">Windows 10 / 11</span>
-        <span class="badge">Python 3.8+</span>
-        <span class="badge">0 dependencies</span>
-        <span class="badge">MIT</span>
-        <span class="badge en">EN / 中文</span>
-        <span class="badge zh">中 / English</span>
+<main id="top">
+
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">
+          <span class="en">Windows 10 / 11 &nbsp;·&nbsp; Python 3.8+ &nbsp;·&nbsp; <b>0 dependencies</b></span>
+          <span class="zh">Windows 10 / 11 &nbsp;·&nbsp; Python 3.8+ &nbsp;·&nbsp; <b>零第三方依赖</b></span>
+        </p>
+        <h1 class="en">A desktop sticky note<br>for plans</h1>
+        <h1 class="zh">一张贴在桌面上的便签<br>但它是四段计划</h1>
+        <p class="lead en">Frameless, always visible on your wallpaper, and it never covers
+          your work. One Python file, zero dependencies, no account.</p>
+        <p class="lead zh">无边框、一直看得见、不挡任何窗口。单个 Python 文件，
+          零第三方依赖，不需要账号。</p>
+        <div class="cta">
+          <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">
+            <span class="en">Download for Windows</span><span class="zh">下载（Windows）</span>
+          </a>
+          <a class="btn s" href="https://github.com/1072699644-cell/desktop-plan-widget">
+            <span class="en">View source</span><span class="zh">查看源码</span>
+          </a>
+        </div>
+        <div class="trust">
+          <span class="en">No account</span><span class="zh">不要账号</span>
+          <span class="en">No cloud</span><span class="zh">不联网</span>
+          <span class="en">No installer</span><span class="zh">不装程序</span>
+          <span>MIT</span>
+        </div>
       </div>
-      <div class="cta">
-        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">
-          <span class="en">Download for Windows</span><span class="zh">下载（Windows）</span>
-        </a>
-        <a class="btn s" href="https://github.com/1072699644-cell/desktop-plan-widget">
-          <span class="en">View source</span><span class="zh">查看源码</span>
-        </a>
+      <div class="shot">
+        <img data-src-en="shots/demo-en.gif" data-src-zh="shots/demo.gif"
+             src="shots/demo-en.gif" width="380" height="543"
+             alt="Plan Card: check in, open the self-review, switch themes">
       </div>
     </div>
-    <div class="shot">
-      <img data-src-en="shots/demo-en.gif" data-src-zh="shots/demo.gif"
-           src="shots/demo-en.gif" alt="Plan Card: check in, open the self-review, switch themes">
+  </div>
+
+  <div class="strip">
+    <div class="wrap strip-in">
+      <div class="stat"><b>4</b>
+        <span class="en">kinds of plans</span><span class="zh">段计划</span></div>
+      <div class="stat"><b>5</b>
+        <span class="en">themes</span><span class="zh">套主题</span></div>
+      <div class="stat"><b>0</b>
+        <span class="en">dependencies</span><span class="zh">第三方依赖</span></div>
+      <div class="stat"><b>1</b>
+        <span class="en">JSON file</span><span class="zh">JSON 文件</span></div>
     </div>
   </div>
-</div>
 
-<section>
-  <div class="wrap">
-    <h2 class="en">Four kinds of plans, four behaviours</h2>
-    <h2 class="zh">四段计划，四种行为</h2>
-    <p class="sub en">They are separate because they behave differently — that is the whole design.</p>
-    <p class="sub zh">四段是因为它们行为不一样，这才是设计的核心。</p>
-    <div class="grid">
-      <div class="card"><span class="k">Daily</span>
-        <h3 class="en">Check in, keep the streak</h3><h3 class="zh">打卡，留下连续天数</h3>
-        <p class="en">One button per habit. Every click is recorded, so you get a
-          streak and a 30-day rate. The list resets each morning; the history does not.</p>
-        <p class="zh">一条习惯一个按钮。每次点击都记录，能看到连续天数和近 30 天打卡率。
-          清单每天早上重置，记录不会。</p></div>
-      <div class="card"><span class="k">Stage</span>
-        <h3 class="en">Count down to a date</h3><h3 class="zh">倒数到一个日期</h3>
-        <p class="en">Pick a deadline from a calendar — no typing dates. The row shows
-          <code>12d</code>, <code>Today</code> or <code>3d late</code>.</p>
-        <p class="zh">点日历选期限，不用手打日期。行内显示
-          <code>剩 12 天</code>、<code>今天</code> 或 <code>逾期 3 天</code>。</p></div>
-      <div class="card"><span class="k">Long-term</span>
-        <h3 class="en">Ongoing, with a percentage</h3><h3 class="zh">长期，带百分比</h3>
-        <p class="en">For things without a deadline. Shows how far along you are.</p>
-        <p class="zh">不设期限的事，显示完成百分比。</p></div>
-      <div class="card"><span class="k">Future</span>
-        <h3 class="en">A parking lot</h3><h3 class="zh">暂存区</h3>
-        <p class="en">Someday / maybe. Deliberately no percentage — it is not work yet.</p>
-        <p class="zh">以后想做的。故意不给百分比——它还不是任务。</p></div>
+  <section>
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="en">Four kinds of plans, four behaviours</h2>
+        <h2 class="zh">四段计划，四种行为</h2>
+        <p class="sub en">They are separate because they behave differently — that is the whole design.</p>
+        <p class="sub zh">四段是因为它们行为不一样，这才是设计的核心。</p>
+      </div>
+      <div class="grid">
+        <div class="card"><span class="chip">Daily</span>
+          <h3 class="en">Check in, keep the streak</h3><h3 class="zh">打卡，留下连续天数</h3>
+          <p class="en">One button per habit. Every click is recorded, so you get a
+            streak and a 30-day rate. The list resets each morning; the history does not.</p>
+          <p class="zh">一条习惯一个按钮。每次点击都记录，能看到连续天数和近 30 天打卡率。
+            清单每天早上重置，记录不会。</p></div>
+        <div class="card"><span class="chip">Stage</span>
+          <h3 class="en">Count down to a date</h3><h3 class="zh">倒数到一个日期</h3>
+          <p class="en">Pick a deadline from a calendar — no typing dates. The row shows
+            <code>12d</code>, <code>Today</code> or <code>3d late</code>.</p>
+          <p class="zh">点日历选期限，不用手打日期。行内显示
+            <code>剩 12 天</code>、<code>今天</code> 或 <code>逾期 3 天</code>。</p></div>
+        <div class="card"><span class="chip">Long-term</span>
+          <h3 class="en">Ongoing, with a percentage</h3><h3 class="zh">长期，带百分比</h3>
+          <p class="en">For things without a deadline. Shows how far along you are.</p>
+          <p class="zh">不设期限的事，显示完成百分比。</p></div>
+        <div class="card"><span class="chip">Future</span>
+          <h3 class="en">A parking lot</h3><h3 class="zh">暂存区</h3>
+          <p class="en">Someday / maybe. Deliberately no percentage — it is not work yet.</p>
+          <p class="zh">以后想做的。故意不给百分比——它还不是任务。</p></div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2 class="en">A self-review you never write</h2>
-    <h2 class="zh">一份不用你写的自我总结</h2>
-    <p class="sub en">Collapsed to one line, expandable. Days logged, check-ins, daily
-      average, best streak — computed from your own data, by day / week / month.</p>
-    <p class="sub zh">默认收起一行，点开看有记录天数、打卡次数、日均完成、最长连续——
-      全部由你的数据算出来，可切日 / 周 / 月。</p>
-    <div class="wide"><img data-src-en="shots/history-en.png" data-src-zh="shots/history.png"
-      src="shots/history-en.png" alt="Check-in history: check-ins, streak, 30-day rate"></div>
-  </div>
-</section>
+  <section id="themes">
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="en">Five themes, not five colour swaps</h2>
+        <h2 class="zh">五套主题，不只是换色号</h2>
+        <p class="sub en">Each one also changes the type, the button shape, the section
+          markers and the checkbox. Same card, five different manners.</p>
+        <p class="sub zh">每套连带字体、按钮形态、段标识、勾选框一起换。
+          同一张卡，五种性格。</p>
+      </div>
+      <div class="themes">
+        <div class="th">
+          <img data-src-en="shots/theme-cute-en.png" data-src-zh="shots/theme-cute.png"
+               src="shots/theme-cute-en.png" width="396" height="566" decoding="async"
+               alt="Cute theme: pill buttons in mint and rose on a lavender card">
+          <div><b class="en">Cute</b><b class="zh">可爱</b>
+            <span class="en">Pill buttons, mint and rose, soft corners.</span>
+            <span class="zh">胶囊按钮、薄荷配玫瑰、圆角很软。</span></div>
+        </div>
+        <div class="th">
+          <img data-src-en="shots/theme-minimal-en.png" data-src-zh="shots/theme-minimal.png"
+               src="shots/theme-minimal-en.png" width="396" height="566" decoding="async"
+               alt="Minimal theme: white paper, hairline outlines, no colour">
+          <div><b class="en">Minimal</b><b class="zh">极简</b>
+            <span class="en">White paper, hairline rules, nothing else.</span>
+            <span class="zh">白纸、发丝线，别的一概没有。</span></div>
+        </div>
+        <div class="th">
+          <img data-src-en="shots/theme-ink-en.png" data-src-zh="shots/theme-ink.png"
+               src="shots/theme-ink-en.png" width="396" height="566" decoding="async"
+               alt="Ink theme: rice paper background, brush underline, vermilion seal">
+          <div><b class="en">Ink</b><b class="zh">水墨</b>
+            <span class="en">Rice paper, brush underlines, a vermilion seal.</span>
+            <span class="zh">米色宣纸、毛笔下划线、朱红印章。</span></div>
+        </div>
+        <div class="th">
+          <img data-src-en="shots/theme-tech-en.png" data-src-zh="shots/theme-tech.png"
+               src="shots/theme-tech-en.png" width="396" height="566" decoding="async"
+               alt="Tech theme: black card, monospace type, cyan brackets">
+          <div><b class="en">Tech</b><b class="zh">科技</b>
+            <span class="en">Black, monospace, cyan brackets.</span>
+            <span class="zh">纯黑、等宽字、青色方括号。</span></div>
+        </div>
+        <div class="th">
+          <img data-src-en="shots/theme-cn-en.png" data-src-zh="shots/theme-cn.png"
+               src="shots/theme-cn-en.png" width="396" height="566" decoding="async"
+               alt="Chinese theme: deep card, gold hairlines, diamond markers">
+          <div><b class="en">Chinese</b><b class="zh">中式</b>
+            <span class="en">Gold hairlines, diamond markers, square frames.</span>
+            <span class="zh">金线、菱形标记、方形描边框。</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2 class="en">Five themes, not five colour swaps</h2>
-    <h2 class="zh">五套主题，不只是换色号</h2>
-    <p class="sub en">Each theme also changes the font, the button shape and the section
-      markers. Cute · Minimal · Ink · Tech · Chinese.</p>
-    <p class="sub zh">每套主题连字体、按钮形态、段标识都换。可爱 · 极简 · 水墨 · 科技 · 中式。</p>
-    <div class="wide"><img data-src-en="shots/hero-en.png" data-src-zh="shots/hero.png"
-      src="shots/hero-en.png" alt="The same card in five themes"></div>
-  </div>
-</section>
+  <section>
+    <div class="wrap split">
+      <div class="split-body">
+        <h2 class="en">A self-review you never write</h2>
+        <h2 class="zh">一份不用你写的自我总结</h2>
+        <p class="en">Collapsed to one line at the top of the card, expandable. Days
+          logged, check-ins, daily average, best streak — computed from your own data.</p>
+        <p class="zh">默认收在最上面一行，点开才看。有记录天数、打卡次数、日均完成、
+          最长连续——全部由你自己的数据算出来。</p>
+        <ul class="ticks">
+          <li class="en">Switch between day, week and month</li>
+          <li class="zh">可切日 / 周 / 月</li>
+          <li class="en">Nothing to fill in, nothing to remember</li>
+          <li class="zh">不用填、不用记</li>
+          <li class="en">Hidden by default, so the card stays quiet</li>
+          <li class="zh">默认隐藏，卡片保持安静</li>
+        </ul>
+      </div>
+      <div class="split-media">
+        <img data-src-en="shots/history-en.png" data-src-zh="shots/history.png"
+             src="shots/history-en.png" width="643" height="470" decoding="async"
+             alt="Check-in history: check-ins, streak and 30-day rate">
+      </div>
+    </div>
+  </section>
 
-<section id="install">
-  <div class="wrap">
-    <h2 class="en">Install</h2><h2 class="zh">安装</h2>
-    <p class="sub en">No installer, no pip, no background service.</p>
-    <p class="sub zh">没有安装程序、不需要 pip、没有后台服务。</p>
-    <ol class="steps">
-      <li><b class="en">Install Python 3.8+</b><b class="zh">装 Python 3.8+</b><br>
-        <span class="en">tkinter is bundled with the Windows installer.</span>
-        <span class="zh">Windows 版自带 tkinter。</span></li>
-      <li><b class="en">Download and unzip</b><b class="zh">下载并解压</b><br>
-        <span class="en">Keep <code>plan_card.pyw</code> and the <code>tools/</code> folder together.</span>
-        <span class="zh"><code>plan_card.pyw</code> 和 <code>tools/</code> 文件夹要放在一起。</span></li>
-      <li><b class="en">Double-click <code>plan_card.pyw</code></b><b class="zh">双击 <code>plan_card.pyw</code></b><br>
-        <span class="en">Sample plans load on first run. Your data stays in <code>plan_data.json</code> next to it.</span>
-        <span class="zh">首次启动载入示例计划。数据写在同目录的 <code>plan_data.json</code>。</span></li>
-    </ol>
-    <pre><code id="clone">git clone https://github.com/1072699644-cell/desktop-plan-widget.git
+  <section>
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="en">How it differs</h2>
+        <h2 class="zh">跟别的不一样在哪</h2>
+        <p class="sub en">It is a sticky note that understands plans — not a task manager
+          that lives in a browser tab.</p>
+        <p class="sub zh">它是一个懂计划的便签，不是一个住在浏览器标签页里的任务管理器。</p>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Plan Card</th>
+              <th class="en">Desktop sticky note</th><th class="zh">桌面便签</th>
+              <th class="en">Todo app</th><th class="zh">待办 App</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="en">Lives on the wallpaper</td><td class="zh">贴在桌面上</td>
+              <td class="y"></td><td class="y"></td><td class="n"></td>
+            </tr>
+            <tr>
+              <td class="en">Plans with structure</td><td class="zh">有结构的计划</td>
+              <td class="y"></td><td class="n"></td><td class="y"></td>
+            </tr>
+            <tr>
+              <td class="en">Check-in streaks built in</td><td class="zh">自带打卡连续天数</td>
+              <td class="y"></td><td class="n"></td><td class="n"></td>
+            </tr>
+            <tr>
+              <td class="en">No account, no sync, no cloud</td><td class="zh">不要账号、不同步、不上云</td>
+              <td class="y"></td><td class="y"></td><td class="n"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="en">Why it looks like this</h2>
+        <h2 class="zh">为什么长这样</h2>
+      </div>
+      <div class="why">
+        <div><em>01</em>
+          <h3 class="en">Below everything</h3><h3 class="zh">沉在下面</h3>
+          <p class="en">No title bar, no taskbar entry, no topmost flag — it never covers
+            the window you are working in.</p>
+          <p class="zh">没有标题栏、不占任务栏、不置顶——永远不遮住你正在用的窗口。</p></div>
+        <div><em>02</em>
+          <h3 class="en">Local first</h3><h3 class="zh">本地优先</h3>
+          <p class="en">One JSON file. No account, no cloud, no telemetry, no network
+            code in the repository.</p>
+          <p class="zh">就一个 JSON 文件。没有账号、没有云、没有埋点，仓库里没有一行联网代码。</p></div>
+        <div><em>03</em>
+          <h3 class="en">Small on purpose</h3><h3 class="zh">刻意做小</h3>
+          <p class="en">Standard library only, so a stock Python install can run it.
+            Not a task manager, by design.</p>
+          <p class="zh">只用标准库，装个 Python 就能跑。刻意不是任务管理器。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <div class="sect-head">
+        <h2 class="en">Install</h2><h2 class="zh">安装</h2>
+        <p class="sub en">No installer, no pip, no background service.</p>
+        <p class="sub zh">没有安装程序、不需要 pip、没有后台服务。</p>
+      </div>
+      <ol class="steps">
+        <li><b class="en">Install Python 3.8+</b><b class="zh">装 Python 3.8+</b>
+          <span class="en">tkinter is bundled with the Windows installer.</span>
+          <span class="zh">Windows 版自带 tkinter。</span></li>
+        <li><b class="en">Download and unzip</b><b class="zh">下载并解压</b>
+          <span class="en">Keep <code>plan_card.pyw</code> and the <code>tools/</code> folder together.</span>
+          <span class="zh"><code>plan_card.pyw</code> 和 <code>tools/</code> 文件夹要放在一起。</span></li>
+        <li><b class="en">Double-click <code>plan_card.pyw</code></b><b class="zh">双击 <code>plan_card.pyw</code></b>
+          <span class="en">Sample plans load on first run. Your data stays in <code>plan_data.json</code> next to it.</span>
+          <span class="zh">首次启动载入示例计划。数据写在同目录的 <code>plan_data.json</code>。</span></li>
+      </ol>
+      <pre><code id="clone">git clone https://github.com/1072699644-cell/desktop-plan-widget.git
 cd desktop-plan-widget
 python plan_card.pyw</code></pre>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2 class="en">Why it looks like this</h2><h2 class="zh">为什么长这样</h2>
-    <div class="grid">
-      <div class="card"><h3 class="en">Below everything</h3><h3 class="zh">沉在下面</h3>
-        <p class="en">No title bar, no taskbar entry, no topmost flag — it never covers
-          the window you are working in.</p>
-        <p class="zh">没有标题栏、不占任务栏、不置顶——永远不遮住你正在用的窗口。</p></div>
-      <div class="card"><h3 class="en">Local first</h3><h3 class="zh">本地优先</h3>
-        <p class="en">One JSON file. No account, no cloud, no telemetry, no network code
-          in the repository.</p>
-        <p class="zh">就一个 JSON 文件。没有账号、没有云、没有埋点，仓库里没有一行联网代码。</p></div>
-      <div class="card"><h3 class="en">Small on purpose</h3><h3 class="zh">刻意做小</h3>
-        <p class="en">Standard library only, so a stock Python install can run it.
-          Not a task manager, by design.</p>
-        <p class="zh">只用标准库，装个 Python 就能跑。刻意不是任务管理器。</p></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="faq">
-  <div class="wrap">
-    <h2>FAQ</h2>
-    <details><summary class="en">Does it sync between machines?</summary>
-      <summary class="zh">会同步到别的电脑吗？</summary>
-      <p class="en">No. There is one <code>plan_data.json</code> — copy it yourself if you move.</p>
-      <p class="zh">不会。只有一个 <code>plan_data.json</code>，想搬就自己拷过去。</p></details>
-    <details><summary class="en">macOS or Linux?</summary>
-      <summary class="zh">支持 macOS / Linux 吗？</summary>
-      <p class="en">Not supported. The frameless rounded translucent window relies on Win32
-        (<code>SetWindowRgn</code>, layered windows).</p>
-      <p class="zh">不支持。无边框圆角半透明依赖 Win32（<code>SetWindowRgn</code>、分层窗口）。</p></details>
-    <details><summary class="en">Does it phone home?</summary>
-      <summary class="zh">会联网吗？</summary>
-      <p class="en">There is no network code in the repository at all.</p>
-      <p class="zh">仓库里没有任何联网代码。</p></details>
-    <details><summary class="en">Does it start with Windows?</summary>
-      <summary class="zh">会开机自启吗？</summary>
-      <p class="en">Not by itself — put a shortcut in <code>shell:startup</code>.</p>
-      <p class="zh">不会。想自启就把快捷方式放进 <code>shell:startup</code>。</p></details>
-  </div>
-</section>
+  <section id="faq">
+    <div class="wrap">
+      <div class="sect-head"><h2>FAQ</h2></div>
+      <div class="faq">
+        <details>
+          <summary><span class="en">Does it sync between machines?</span><span class="zh">会同步到别的电脑吗？</span></summary>
+          <p class="en">No. There is one <code>plan_data.json</code> — copy it yourself if you move.</p>
+          <p class="zh">不会。只有一个 <code>plan_data.json</code>，想搬就自己拷过去。</p></details>
+        <details>
+          <summary><span class="en">macOS or Linux?</span><span class="zh">支持 macOS / Linux 吗？</span></summary>
+          <p class="en">Not supported. The frameless rounded translucent window relies on Win32
+            (<code>SetWindowRgn</code>, layered windows).</p>
+          <p class="zh">不支持。无边框圆角半透明依赖 Win32（<code>SetWindowRgn</code>、分层窗口）。</p></details>
+        <details>
+          <summary><span class="en">Does it phone home?</span><span class="zh">会联网吗？</span></summary>
+          <p class="en">There is no network code in the repository at all.</p>
+          <p class="zh">仓库里没有任何联网代码。</p></details>
+        <details>
+          <summary><span class="en">Does it start with Windows?</span><span class="zh">会开机自启吗？</span></summary>
+          <p class="en">Not by itself — put a shortcut in <code>shell:startup</code>.</p>
+          <p class="zh">不会。想自启就把快捷方式放进 <code>shell:startup</code>。</p></details>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
   <div class="wrap foot">
-    <div>MIT licensed · made by one person · <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
-    <div>
-      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a> ·
-      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a> ·
-      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/使用说明.md">使用说明</a>
+    <div class="foot-l">
+      <span class="en">MIT licensed · built by one person · no company behind it</span>
+      <span class="zh">MIT 协议 · 一个人写的 · 背后没有公司</span>
+      <br><a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a>
+    </div>
+    <div class="foot-r">
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md">使用说明</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
     </div>
   </div>
 </footer>
@@ -276,6 +623,7 @@ python plan_card.pyw</code></pre>
   function setCN(on){
     document.body.classList.toggle('cn', on);
     btn.textContent = on ? 'English' : '中文';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     document.documentElement.lang = on ? 'zh-CN' : 'en';
     var pics = document.querySelectorAll('img[data-src-en]');
     for (var i = 0; i < pics.length; i++) {
@@ -301,14 +649,17 @@ python plan_card.pyw</code></pre>
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Plan Card",
+  "alternateName": "desktop-plan-widget",
   "applicationCategory": "ProductivityApplication",
   "operatingSystem": "Windows 10, Windows 11",
   "description": "A frameless Windows desktop sticky note for plans: daily check-ins with streaks, staged goals with calendar deadlines, an auto-generated self-review and five themes. One Python file, zero dependencies.",
   "url": "https://1072699644-cell.github.io/desktop-plan-widget/",
   "downloadUrl": "https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip",
+  "codeRepository": "https://github.com/1072699644-cell/desktop-plan-widget",
   "license": "https://github.com/1072699644-cell/desktop-plan-widget/blob/main/LICENSE",
   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-  "screenshot": "shots/hero.png"
+  "screenshot": "https://1072699644-cell.github.io/desktop-plan-widget/shots/hero.png",
+  "image": "https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png"
 }
 </script>
 </body>
