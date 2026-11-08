@@ -11,7 +11,7 @@ wallpaper, never covers your work.
 <img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="MIT">
 <img src="https://img.shields.io/badge/UI-%E4%B8%AD%E6%96%87%20%2F%20English-e0558a" alt="Bilingual UI">
 
-<img src="docs/shots/demo.gif" width="366" alt="Check in, open the self-review, switch themes">
+<img src="docs/shots/demo-en.gif" width="366" alt="Check in, open the self-review, switch themes">
 
 *Every frame above is the real app — check in, self-review, then three of the five themes.*
 
@@ -68,7 +68,7 @@ percentage means something. Daily is a routine; Future is a parking lot.
 
 Every click is recorded, so a habit has a past — not just a checkbox.
 
-<img src="docs/shots/history.png" width="600" alt="History popup: check-ins, streak, 30-day rate and a day-by-day list">
+<img src="docs/shots/history-en.png" width="600" alt="History popup: check-ins, streak, 30-day rate and a day-by-day list">
 
 - **check-ins** — total days you did it
 - **streak** — consecutive days ending today (or yesterday, if today isn't done)
@@ -85,7 +85,7 @@ Five themes. Each one also swaps the **font, the button shape and the section
 marker** — a palette change alone would just look like the same app in a
 different colour.
 
-<img src="docs/shots/hero.png" width="920" alt="The same card in five themes: Cute, Minimal, Ink, Tech, Chinese">
+<img src="docs/shots/hero-en.png" width="920" alt="The same card in five themes: Cute, Minimal, Ink, Tech, Chinese">
 
 | Theme | Palette | Buttons | Markers |
 |---|---|---|---|
