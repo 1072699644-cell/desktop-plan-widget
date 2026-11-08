@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+PackageIdentifier: PlanCard.PlanCard
+PackageVersion: 1.0.0
+InstallerType: zip
+NestedInstallerType: portable
+# TODO: 见 README —— 更稳的做法是把这里指向 zip 里的 plancard.cmd 启动器
+NestedInstallerFiles:
+  - RelativeFilePath: plan_card.pyw
+    PortableCommandAlias: plancard
+Installers:
+  - Architecture: x64
+    # TODO: 打 tag 后换成 release 资源地址
+    InstallerUrl: https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/tags/v1.0.0.zip
+    # TODO: 每次发版必须重算 —— (Get-FileHash .\v1.0.0.zip -Algorithm SHA256).Hash
+    InstallerSha256: 0000000000000000000000000000000000000000000000000000000000000000
+ManifestType: installer
+ManifestVersion: 1.6.0

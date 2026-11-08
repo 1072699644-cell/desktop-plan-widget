@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+PackageIdentifier: PlanCard.PlanCard
+PackageVersion: 1.0.0
+PackageLocale: en-US
+Publisher: Plan Card
+PublisherUrl: https://github.com/1072699644-cell
+PublisherSupportUrl: https://github.com/1072699644-cell/desktop-plan-widget/issues
+PackageName: Plan Card
+PackageUrl: https://1072699644-cell.github.io/desktop-plan-widget/
+License: MIT
+LicenseUrl: https://github.com/1072699644-cell/desktop-plan-widget/blob/main/LICENSE
+Copyright: Copyright (c) 2026 Plan Card
+ShortDescription: A desktop sticky note for plans on Windows
+Description: A frameless desktop card for daily check-ins, staged goals with deadlines, long-term goals with a percentage and a someday list. Keeps a check-in history, generates a self-review automatically, has five themes and stores everything in one local JSON file. One Python file, no third-party dependencies, no account, no network code.
+Moniker: plancard
+Tags:
+  - sticky-notes
+  - todo
+  - planning
+  - habit-tracker
+  - desktop-widget
+  - python
+ReleaseNotesUrl: https://github.com/1072699644-cell/desktop-plan-widget/blob/main/CHANGELOG.md
+# TODO: 需要用户预装 Python 3.8+，评估是否在上游评审时说明
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

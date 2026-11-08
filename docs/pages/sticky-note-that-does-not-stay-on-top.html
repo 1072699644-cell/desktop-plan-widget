@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A desktop sticky note that doesn't stay on top (Windows)</title>
+<meta name="description" content="Sticky note apps either float over everything or hide in the tray. A third option: a frameless card with no topmost flag, so it takes part in normal window stacking instead of fighting it.">
+<meta name="theme-color" content="#080B11">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/pages/sticky-note-that-does-not-stay-on-top.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/pages/sticky-note-that-does-not-stay-on-top.html">
+<meta property="og:title" content="A desktop sticky note that doesn't stay on top (Windows)">
+<meta property="og:description" content="Why always-on-top sticky notes get in the way, and what a no-topmost card feels like instead.">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="../index.html#themes">Themes</a>
+      <a href="../index.html#install">Install</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <p class="crumb"><a href="../index.html">Home</a> / Sticky notes and topmost</p>
+      <h1>A desktop sticky note that doesn't stay on top</h1>
+      <p class="lead">Every sticky note app makes the same bet: it is always on top, so you
+        can never lose sight of your notes. That bet is wrong about half the time.</p>
+
+      <h2>The two options you actually get</h2>
+      <p>Open Windows and look for a way to keep a note on your wallpaper. You get two
+        designs, and both of them are a compromise:</p>
+      <ul>
+        <li><strong>Always on top.</strong> The note floats above every window. Useful for
+          thirty seconds, then it covers the thing you are working on. You drag it to a
+          corner, it covers something else.</li>
+        <li><strong>In the tray.</strong> The note is behind an icon. You will not open it.
+          Things you have to click to see stop existing.</li>
+      </ul>
+      <p>The first design fails because it fights the window manager. The second fails
+        because it asks you to remember it exists.</p>
+
+      <h2>The third option: be a normal window</h2>
+      <p>A window does not need a title bar to participate in z-order. If you remove the
+        chrome and <em>do not</em> set the topmost flag, you get something that behaves like
+        every other window on your desktop: when you click your editor, the card goes behind
+        it. When you click the card, it comes forward.</p>
+      <p>That is the whole idea. It is not a trick, and it is not "always at the bottom"
+        either — it is simply a window that never asks for special treatment:</p>
+      <div class="note">
+        <b>What it feels like:</b> the card sits on your wallpaper like an icon that happens
+        to have text rows on it. It gets covered. It comes back when you reach for it. You
+        stop noticing it, which is the point.
+      </div>
+      <p>On Windows this means three things: <code>overrideredirect(True)</code> so Tk stops
+        drawing a title bar, no <code>WS_EX_TOPMOST</code> so Windows does not pin it above
+        everything, and a rounded window region so the rectangle does not look like a dialog
+        box. The full technique — including the corners and the translucency — is written up
+        in <a href="../pages/tkinter-frameless-rounded-window.html">the Tkinter page</a>.</p>
+
+      <h2>What this costs you, honestly</h2>
+      <p>A frameless window gives up more than a title bar:</p>
+      <ul>
+        <li><strong>No taskbar entry.</strong> There is no button to click, so you need
+          another way to find the card — in Plan Card it stays where you left it.</li>
+        <li><strong>No Alt+Tab entry.</strong> The same reason. If it gets fully buried under
+          a maximised window, you have to minimise that window to see it again.</li>
+        <li><strong>You drag it yourself.</strong> There is no snap-to-edge behaviour unless
+          you write it.</li>
+        <li><strong>Nothing is on top when you need it most.</strong> If you want the card to
+          cover your browser, it will not, and that is deliberate.</li>
+      </ul>
+      <p>If any of those are deal-breakers, a normal always-on-top widget is a better fit
+        and you should use one. This is a specific trade, not a universal improvement.</p>
+
+      <h2>If you want the other trade instead</h2>
+      <p>We wrote about <a href="../pages/open-source-sticky-notes-for-windows.html">the other
+        options on Windows</a>, including the ones that are always on top and the ones that
+        live in the tray, so you can pick the failure mode you can live with.</p>
+
+      <div class="cta-row">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">Download for Windows</a>
+        <a class="btn s" href="../index.html#install">How to install</a>
+      </div>
+    </article>
+
+    <nav class="related">
+      <h2>Keep reading</h2>
+      <ul>
+        <li><a href="../pages/four-kinds-of-plans.html">Why your plan list should be four lists, not one</a>
+          <span>Daily, staged, long-term and future plans behave differently.</span></li>
+        <li><a href="../pages/tkinter-frameless-rounded-window.html">Tkinter, frameless, rounded and translucent on Windows</a>
+          <span>The Win32 calls behind all of this, with code.</span></li>
+        <li><a href="../pages/habit-tracker-without-an-account.html">A habit tracker with no account and no cloud</a>
+          <span>What you lose when nothing syncs, and why it may be worth it.</span></li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-l">MIT licensed · built by one person<br>
+      <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div class="foot-r">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "A desktop sticky note that doesn't stay on top",
+  "about": "Windows window stacking behaviour for frameless desktop widgets",
+  "author": {"@type": "Person", "name": "Plan Card"},
+  "publisher": {"@type": "Organization", "name": "Plan Card"},
+  "mainEntityOfPage": "https://1072699644-cell.github.io/desktop-plan-widget/pages/sticky-note-that-does-not-stay-on-top.html"
+}
+</script>
+</body>
+</html>

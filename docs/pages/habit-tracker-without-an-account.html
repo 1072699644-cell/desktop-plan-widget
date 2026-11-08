@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A habit tracker with no account, no cloud and no sync</title>
+<meta name="description" content="What you actually give up when a habit tracker stores everything in one local JSON file — and why that trade is still worth it for a personal desktop tool.">
+<meta name="theme-color" content="#080B11">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/pages/habit-tracker-without-an-account.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/pages/habit-tracker-without-an-account.html">
+<meta property="og:title" content="A habit tracker with no account, no cloud and no sync">
+<meta property="og:description" content="One local JSON file instead of an account. Here is exactly what that costs you.">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="../index.html#themes">Themes</a>
+      <a href="../index.html#install">Install</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <p class="crumb"><a href="../index.html">Home</a> / Local-only trackers</p>
+      <h1>A habit tracker that doesn't want your email</h1>
+      <p class="lead">Every habit app asks you to create an account first. You wanted to
+        check a box, not onboard a service. So what happens if we delete the account
+        entirely?</p>
+
+      <h2>The sign-up tax</h2>
+      <p>An account is not free. It costs you an email, a password you will forget, and a
+        promise about what happens to your data when the company is acquired or shut down.
+        In exchange you get sync, which is a real feature — and you get a service that can
+        go away.</p>
+      <p>For a personal habit tracker, most people use exactly one machine, check the same
+        six boxes every evening, and would be mildly annoyed to lose the history. That is a
+        problem a file solves, not a server.</p>
+
+      <h2>What "local" means here, precisely</h2>
+      <p>Plan Card keeps everything in one file, <code>plan_data.json</code>, sitting next
+        to <code>plan_card.pyw</code>. Your plans, the check-in history, the theme you
+        picked, the window position — all of it. There is no network code in the repository
+        at all, which is a claim you can verify by reading it.</p>
+      <p>The check-ins themselves are the only interesting data. Each plan row gets a stable
+        id, and every click appends a date under that id, which is what makes a streak
+        possible:</p>
+      <pre><code>"打卡记录": {
+  "a3f91b2c": ["2026-11-03", "2026-11-04", "2026-11-05", "2026-11-08"]
+}</code></pre>
+      <p>That is the whole database. From it the card computes a current streak, the number
+        of check-ins today, and a 30-day completion rate.</p>
+
+      <h2>What you give up</h2>
+      <p>Honesty is more useful than a feature list, so here is the cost side:</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Thing</th><th>Cloud app</th><th class="en">Plan Card</th></tr></thead>
+          <tbody>
+            <tr><td>Same data on two computers</td><td>Automatic</td><td>Copy the file yourself</td></tr>
+            <tr><td>Phone app</td><td>Yes</td><td>None</td></tr>
+            <tr><td>Backups</td><td>Provider's job</td><td>Your job — copy the JSON</td></tr>
+            <tr><td>Survives the company closing</td><td>Probably not</td><td>Yes, it is a file</td></tr>
+            <tr><td>Sold or leaked to a third party</td><td>Possible</td><td>Nothing to sell</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>If you use two machines daily, this design is wrong for you and you should use
+        something that syncs. If you want a tool that still works in five years, a JSON file
+        is a better bet than a startup.</p>
+
+      <h2>Working around the missing sync</h2>
+      <p>If you want sync anyway, you do not need the app to implement it:</p>
+      <ul>
+        <li>Put the folder in OneDrive, iCloud Drive or Dropbox. It is one file; the sync
+          client does not care what is in it.</li>
+        <li>Or commit it to a private git repository and pull on the other machine. JSON
+          diffs badly, but for a personal tracker that rarely matters.</li>
+        <li>Or just copy it before you move. This is the honest answer for the 90% case.</li>
+      </ul>
+
+      <div class="cta-row">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">Download for Windows</a>
+        <a class="btn s" href="../index.html#install">How to install</a>
+      </div>
+    </article>
+
+    <nav class="related">
+      <h2>Keep reading</h2>
+      <ul>
+        <li><a href="../pages/four-kinds-of-plans.html">Why your plan list should be four lists, not one</a>
+          <span>Daily check-ins and long-term goals need different behaviours.</span></li>
+        <li><a href="../pages/sticky-note-that-does-not-stay-on-top.html">A desktop sticky note that doesn't stay on top</a>
+          <span>Why the card never covers the window you are working in.</span></li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-l">MIT licensed · built by one person<br>
+      <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div class="foot-r">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "A habit tracker with no account, no cloud and no sync",
+  "about": "Local-first habit tracking",
+  "author": {"@type": "Person", "name": "Plan Card"},
+  "mainEntityOfPage": "https://1072699644-cell.github.io/desktop-plan-widget/pages/habit-tracker-without-an-account.html"
+}
+</script>
+</body>
+</html>

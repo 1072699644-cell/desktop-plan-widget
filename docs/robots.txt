@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://1072699644-cell.github.io/desktop-plan-widget/sitemap.xml

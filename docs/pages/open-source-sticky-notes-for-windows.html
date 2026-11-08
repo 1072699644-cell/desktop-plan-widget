@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open source sticky notes for Windows that aren't Electron apps</title>
+<meta name="description" content="The built-in Sticky Notes, Joplin, Obsidian, commercial desktop notes and Plan Card — what each one is actually for, and how to pick without installing five of them.">
+<meta name="theme-color" content="#080B11">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/pages/open-source-sticky-notes-for-windows.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/pages/open-source-sticky-notes-for-windows.html">
+<meta property="og:title" content="Open source sticky notes for Windows that aren't Electron apps">
+<meta property="og:description" content="An honest comparison of the desktop note options on Windows, including where Plan Card is the wrong choice.">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="../index.html#themes">Themes</a>
+      <a href="../index.html#install">Install</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <p class="crumb"><a href="../index.html">Home</a> / Comparison</p>
+      <h1>Open source sticky notes for Windows</h1>
+      <p class="lead">There is no shortage of note apps. The problem is that almost none of
+        them are <em>desktop</em> notes — they are browsers wearing a desktop icon, and you
+        have to open one before you can see your own plan.</p>
+
+      <h2>The options, and what each is really for</h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Tool</th><th>What it is</th><th>Best for</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Sticky Notes</strong><br><span>built into Windows</span></td>
+              <td>A note window per note, tied to your Microsoft account for sync</td>
+              <td>Jotting a phone number. Nobody's plans.</td>
+            </tr>
+            <tr>
+              <td><strong>Joplin</strong><br><span>open source</span></td>
+              <td>A full note-taking system with sync, encryption and mobile apps</td>
+              <td>Thousands of notes you need to search</td>
+            </tr>
+            <tr>
+              <td><strong>Obsidian</strong><br><span>free for personal use</span></td>
+              <td>Local markdown knowledge base</td>
+              <td>Connected, interlinked writing</td>
+            </tr>
+            <tr>
+              <td><strong>Commercial desktop notes</strong></td>
+              <td>Polished always-on-top note cards, usually paid</td>
+              <td>Naked notes you glance at</td>
+            </tr>
+            <tr>
+              <td><strong>Plan Card</strong><br><span>MIT, one Python file</span></td>
+              <td>A frameless card on your wallpaper with four kinds of plans, check-ins and
+                an automatic self-review</td>
+              <td>Small structured plans you actually look at</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Why "not Electron" is a real criterion</h2>
+      <p>An Electron note app is 100–200 MB installed and 150–400 MB of RAM while idle,
+        because it ships a browser. For a tool you keep open all day on a work laptop, that is
+        not a detail — it is the difference between a widget and an application.</p>
+      <p>Plan Card is a 70 KB script using only the Python standard library, so it uses
+        whatever Tk uses (tens of megabytes) and starts instantly. The trade is that it looks
+        like a native Windows widget rather than a web page, and it has no plugin ecosystem,
+        because there is no ecosystem — it is one file.</p>
+
+      <h2>What Plan Card is not</h2>
+      <p>Being clear about this saves everybody time:</p>
+      <ul>
+        <li><strong>Not a note app.</strong> It has no free-form notes, no images, no
+          attachments, no markdown. Rows are short text and a state.</li>
+        <li><strong>Not a task manager.</strong> No projects, no tags, no dependencies, no
+          Gantt, no recurring rules beyond "daily".</li>
+        <li><strong>Not a sync product.</strong> One JSON file on one machine. If you work on
+          two computers, this will annoy you.</li>
+        <li><strong>Not cross-platform.</strong> The frameless rounded translucent window is
+          Win32 API; there is no macOS or Linux build.</li>
+      </ul>
+      <p>If you need any of the above, Joplin or a real task manager is the right answer and
+        you should use it. The point of this tool is the narrow middle: a small structured
+        plan that you see without opening anything.</p>
+
+      <h2>How to choose in one minute</h2>
+      <ul>
+        <li>You want many notes with search → <strong>Joplin</strong>.</li>
+        <li>You want linked writing → <strong>Obsidian</strong>.</li>
+        <li>You want a plain sticky note that syncs → <strong>Sticky Notes</strong>.</li>
+        <li>You want a few habits and goals visible on the desktop, with no account and no
+          network → <strong>Plan Card</strong>.</li>
+      </ul>
+
+      <h2>Reading the source before you run it</h2>
+      <p>The usual reason people look for open source is that they do not trust a random
+        executable. The relevant promises here are checkable in a few minutes:</p>
+      <ul>
+        <li>No network code: grep the repository for <code>socket</code>,
+          <code>urllib</code>, <code>requests</code>.</li>
+        <li>No account: no login screen exists, so there is nothing to log in to.</li>
+        <li>No telemetry: no analytics endpoint, because there is no network code at all.</li>
+        <li>Data you can read: <code>plan_data.json</code> is plain JSON, not a database.</li>
+      </ul>
+
+      <div class="cta-row">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">Download for Windows</a>
+        <a class="btn s" href="../index.html#install">How to install</a>
+      </div>
+    </article>
+
+    <nav class="related">
+      <h2>Keep reading</h2>
+      <ul>
+        <li><a href="../pages/four-kinds-of-plans.html">Why your plan list should be four lists</a>
+          <span>The method behind the four sections.</span></li>
+        <li><a href="../pages/habit-tracker-without-an-account.html">A habit tracker with no account and no cloud</a>
+          <span>What local-only means in practice.</span></li>
+        <li><a href="../pages/sticky-note-that-does-not-stay-on-top.html">A sticky note that doesn't stay on top</a>
+          <span>The window behaviour that makes it usable.</span></li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-l">MIT licensed · built by one person<br>
+      <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div class="foot-r">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Open source sticky notes for Windows that aren't Electron apps",
+  "about": "Desktop note applications on Windows",
+  "author": {"@type": "Person", "name": "Plan Card"},
+  "mainEntityOfPage": "https://1072699644-cell.github.io/desktop-plan-widget/pages/open-source-sticky-notes-for-windows.html"
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tkinter frameless, rounded and translucent window on Windows (with code)</title>
+<meta name="description" content="How to make a Tkinter window with no title bar, rounded corners and translucency on Windows using overrideredirect, -alpha, SetWindowRgn and CreateRoundRectRgn — including the traps each one sets.">
+<meta name="theme-color" content="#080B11">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/pages/tkinter-frameless-rounded-window.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/pages/tkinter-frameless-rounded-window.html">
+<meta property="og:title" content="Tkinter frameless, rounded and translucent window on Windows">
+<meta property="og:description" content="overrideredirect, -alpha, SetWindowRgn and CreateRoundRectRgn, with the traps each one sets.">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="../index.html#themes">Themes</a>
+      <a href="../index.html#install">Install</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <p class="crumb"><a href="../index.html">Home</a> / Tkinter on Windows</p>
+      <h1>Tkinter, frameless, rounded and translucent — on Windows</h1>
+      <p class="lead">Tk can do none of these three things by itself. All three are two lines
+        of <code>ctypes</code> away, and all three have a trap that will cost you an
+        afternoon if nobody tells you first.</p>
+
+      <p>This is the technique used by <a href="../index.html">Plan Card</a>, a desktop plan
+        card written with nothing but the standard library. The whole thing depends on the
+        standard library being enough, so everything below is stdlib-only: no
+        <code>pywin32</code>, no third-party packages.</p>
+
+      <h2>1. Frameless</h2>
+      <pre><code>root = tk.Tk()
+root.overrideredirect(True)</code></pre>
+      <p>That is it — no title bar, no borders, no taskbar button. On Windows the window
+        manager stops treating it as a managed window.</p>
+      <h3>What breaks immediately</h3>
+      <ul>
+        <li><strong>You cannot close it.</strong> There is no X. Add a close control, or a
+          key binding, before you ship.</li>
+        <li><strong>You cannot move it.</strong> Implement drag yourself: bind
+          <code>&lt;Button-1&gt;</code> on your header, remember the offset, and call
+          <code>geometry("+x+y")</code> on <code>&lt;B1-Motion&gt;</code>.</li>
+        <li><strong>No Alt+Tab, no taskbar.</strong> The window is invisible to window
+          switching. If it gets buried under a maximised window, the user has to minimise
+          that window to find it.</li>
+        <li><strong>No focus by default.</strong> Because nothing is activated, the window may
+          not receive keyboard events until clicked.</li>
+      </ul>
+
+      <h2>2. Translucent</h2>
+      <pre><code>root.attributes("-alpha", 0.9)   # 0.0 – 1.0</code></pre>
+      <p>The trap: <code>-alpha</code> applies to the <em>entire window</em>, text included.
+        At 0.9 nothing is noticeable; at 0.6 your labels get soft too. If you want a truly
+        transparent background with opaque text, the usual alternative is
+        <code>-transparentcolor</code>, which punches a colour key through the window — but
+        it produces hard, aliased edges around rounded shapes and text, so most people come
+        back to <code>-alpha</code> and accept slight text softening.</p>
+      <p>One more thing worth knowing: on a layered window the alpha can be animated. Plan
+        Card fades in by stepping from 0.0 to the target opacity in a
+        <code>root.after(16, ...)</code> loop, which takes about a sixth of a second.</p>
+
+      <h2>3. Rounded corners</h2>
+      <p>This is the one that is not obvious. Tk draws rectangles; Windows decides the shape
+        of the window. You have to tell Windows to clip it:</p>
+      <pre><code>import ctypes
+
+def round_region(win, w, h, r=18):
+    hwnd = ctypes.windll.user32.GetParent(win.winfo_id()) or win.winfo_id()
+    rgn = ctypes.windll.gdi32.CreateRoundRectRgn(0, 0, w + 1, h + 1, r, r)
+    ctypes.windll.user32.SetWindowRgn(hwnd, rgn, True)</code></pre>
+      <h3>The three traps</h3>
+      <ul>
+        <li><strong><code>GetParent</code>.</strong> Tk on Windows wraps your widgets in a
+          container window, so <code>winfo_id()</code> is usually not the top-level handle you
+          want to clip. <code>GetParent(...) or ...</code> covers both cases.</li>
+        <li><strong><code>w + 1</code>, <code>h + 1</code>.</strong> The region is exclusive
+          at the right and bottom edge. Without the extra pixel you get a one-pixel sliver of
+          the window showing on two sides.</li>
+        <li><strong>Re-apply on resize.</strong> The region is a snapshot: if the window
+          grows, the new area is not clipped. Call <code>round_region</code> again after every
+          size change, not just at startup.</li>
+      </ul>
+
+      <h2>4. Drawing rounded shapes <em>inside</em> the window</h2>
+      <p>The window region clips the outside. Cards, buttons and chips inside the window are
+        drawn by you. Tk has no rounded rectangle primitive, but a smoothed polygon with
+        duplicated corner points is close enough that nobody can tell:</p>
+      <pre><code>def rounded(canvas, x0, y0, x1, y1, r, **kw):
+    pts = [x0 + r, y0, x1 - r, y0, x1, y0, x1, y0 + r,
+           x1, y1 - r, x1, y1, x1 - r, y1, x0 + r, y1,
+           x0, y1, x0, y1 - r, x0, y0 + r, x0, y0]
+    return canvas.create_polygon(pts, smooth=True, **kw)</code></pre>
+      <p>Each corner repeats its control point, which pulls the spline tight into a
+        quarter-circle. It is the same trick every Tk rounded-widget snippet uses, and it
+        scales to any radius.</p>
+
+      <h2>The order that works</h2>
+      <ol>
+        <li><code>overrideredirect(True)</code></li>
+        <li>build the UI, then let Tk compute the real size
+          (<code>update_idletasks()</code>)</li>
+        <li>fit the height, then call <code>round_region</code> with the final size</li>
+        <li>set <code>-alpha</code> last, and fade in</li>
+      </ol>
+      <p>Getting the region before the window has its final size is the single most common
+        bug: the corners are correct for a height the window no longer has.</p>
+
+      <div class="note">
+        <b>Working example.</b> All of the above is in one 70 KB file,
+        <code>plan_card.pyw</code>, with no dependency outside the standard library.
+        <a href="https://github.com/1072699644-cell/desktop-plan-widget">Read it on GitHub</a>.
+      </div>
+
+      <div class="cta-row">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget">View the source</a>
+        <a class="btn s" href="../pages/sticky-note-that-does-not-stay-on-top.html">Why no topmost flag</a>
+      </div>
+    </article>
+
+    <nav class="related">
+      <h2>Keep reading</h2>
+      <ul>
+        <li><a href="../pages/sticky-note-that-does-not-stay-on-top.html">A desktop sticky note that doesn't stay on top</a>
+          <span>What you trade away for a chrome-less window.</span></li>
+        <li><a href="../pages/ship-python-pyw-app-without-installer.html">Shipping a .pyw app with no installer</a>
+          <span>Getting this into other people's hands.</span></li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-l">MIT licensed · built by one person<br>
+      <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div class="foot-r">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Architecture.md">Architecture</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Tkinter frameless, rounded and translucent window on Windows",
+  "about": "Python Tkinter, ctypes, Win32 window regions",
+  "author": {"@type": "Person", "name": "Plan Card"},
+  "mainEntityOfPage": "https://1072699644-cell.github.io/desktop-plan-widget/pages/tkinter-frameless-rounded-window.html"
+}
+</script>
+</body>
+</html>

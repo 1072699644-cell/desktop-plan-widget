@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipping a Python .pyw app to Windows users with no installer</title>
+<meta name="description" content="Why a .pyw file beats a 30 MB PyInstaller build for a small Windows tool, what no-install really costs the user, and how to get listed in winget without an installer.">
+<meta name="theme-color" content="#080B11">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/pages/ship-python-pyw-app-without-installer.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Plan Card">
+<meta property="og:url" content="https://1072699644-cell.github.io/desktop-plan-widget/pages/ship-python-pyw-app-without-installer.html">
+<meta property="og:title" content="Shipping a Python .pyw app to Windows users with no installer">
+<meta property="og:description" content="No setup.exe, no PyInstaller, no admin rights — and what that costs the user.">
+<meta property="og:image" content="https://1072699644-cell.github.io/desktop-plan-widget/shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="../index.html"><span class="mark"></span>Plan Card</a>
+    <nav class="nav-links">
+      <a href="../index.html#themes">Themes</a>
+      <a href="../index.html#install">Install</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <p class="crumb"><a href="../index.html">Home</a> / Packaging</p>
+      <h1>Shipping a Python app to Windows users with no installer</h1>
+      <p class="lead">The default answer is "freeze it with PyInstaller and ship a 30 MB
+        .exe". For a small tool that is usually the wrong trade, and the reason is not size.</p>
+
+      <h2>Why .pyw and not .py</h2>
+      <p>On Windows, <code>.py</code> files are launched with <code>python.exe</code>, which
+        opens a console window behind your GUI. <code>.pyw</code> files are launched with
+        <code>pythonw.exe</code>, which does not. Renaming the file is the entire fix.</p>
+      <p>The catch: when <code>pythonw.exe</code> crashes, the traceback goes nowhere. You get
+        a window that does not appear, and no error. During development, run it with
+        <code>python</code> so you can see the traceback, and only ship the
+        <code>.pyw</code> name.</p>
+
+      <h2>Why not PyInstaller</h2>
+      <p>A frozen build is a 10–30 MB executable that unpacks itself into a temp directory on
+        every launch. Three practical consequences:</p>
+      <ul>
+        <li><strong>Antivirus noise.</strong> Self-extracting, unsigned executables are the
+          shape of a malware dropper. Users report false positives, and you spend your time
+          explaining instead of shipping.</li>
+        <li><strong>Slow start.</strong> Unpacking tens of megabytes takes more than the app
+          needs to draw a window.</li>
+        <li><strong>It hides the source</strong>, which for an open-source tool that claims
+          "no network code, read it yourself" is exactly backwards.</li>
+      </ul>
+      <p>Freezing makes sense when your users cannot install Python, or when you ship a
+        native dependency that is painful to build. Neither is true here.</p>
+
+      <h2>What "no install" costs the user</h2>
+      <p>Be honest about this, because it is the real price:</p>
+      <ul>
+        <li>They must have Python 3.8+ already. That is a smaller group than developers
+          assume, and a much larger group than it was five years ago.</li>
+        <li>They must unzip, not run a setup wizard. Usually fine; occasionally confusing.</li>
+        <li>There is no Start-menu entry, no uninstaller, and nothing in "Apps &amp;
+          features". Deleting the folder is the uninstall — which some people find
+          uncomfortable.</li>
+        <li>File associations and "Open with" never point at it.</li>
+      </ul>
+      <p>None of those are fatal for a personal tool. All of them are worth stating on the
+        download page instead of letting people discover them.</p>
+
+      <h2>A folder layout that survives moving</h2>
+      <p>Keep the program and its data together, and resolve paths relative to the script
+        rather than the working directory — otherwise a shortcut with a different "Start in"
+        value writes your data somewhere unexpected:</p>
+      <pre><code>desktop-plan-widget/
+├─ plan_card.pyw          # double-click this
+├─ tools/                 # data layer, i18n
+├─ sample/                # demo data, seeded on first run
+└─ plan_data.json         # created next to the script on first save</code></pre>
+      <pre><code>ROOT = os.path.dirname(os.path.abspath(__file__))
+PATH = os.path.join(ROOT, "plan_data.json")</code></pre>
+      <p>Two lines, and the tool works from any working directory, any drive, any user
+        profile.</p>
+
+      <h2>Getting found anyway: winget and portables</h2>
+      <p>Users do search package managers, and listing there does not require an installer —
+        a <em>portable</em> manifest points at a zip and a command to run. The repository
+        keeps the manifest skeleton in <code>packaging/winget/</code> with the fields that
+        need filling in marked as such.</p>
+      <p>Two things to know before you try: winget manifests are validated against the
+        published URL's hash, so you bump the manifest on every release; and Chocolatey is a
+        separate (community-reviewed) submission with its own rules. Neither is a one-time
+        job, which is why most small tools never do it.</p>
+
+      <h2>When to freeze instead</h2>
+      <p>Freeze when the tool must run on machines where users cannot install anything — a
+        corporate image, a school lab — or when your dependency tree includes something
+        compiled. For a single-file stdlib tool, the zip is better for everyone: smaller,
+        faster, inspectable, and impossible to get flagged as a dropper.</p>
+
+      <div class="cta-row">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">Download the zip</a>
+        <a class="btn s" href="https://github.com/1072699644-cell/desktop-plan-widget">View the source</a>
+      </div>
+    </article>
+
+    <nav class="related">
+      <h2>Keep reading</h2>
+      <ul>
+        <li><a href="../pages/tkinter-frameless-rounded-window.html">Tkinter frameless, rounded and translucent on Windows</a>
+          <span>The window tricks behind the card.</span></li>
+        <li><a href="../pages/open-source-sticky-notes-for-windows.html">Open source sticky notes for Windows</a>
+          <span>How this compares to what else is out there.</span></li>
+      </ul>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-l">MIT licensed · built by one person<br>
+      <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div class="foot-r">
+      <a href="../index.html">Home</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Shipping a Python .pyw app to Windows users with no installer",
+  "about": "Python packaging for Windows, winget portable manifests",
+  "author": {"@type": "Person", "name": "Plan Card"},
+  "mainEntityOfPage": "https://1072699644-cell.github.io/desktop-plan-widget/pages/ship-python-pyw-app-without-installer.html"
+}
+</script>
+</body>
+</html>
