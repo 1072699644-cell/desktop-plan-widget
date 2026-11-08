@@ -1,0 +1,15 @@
+﻿# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ---- runtime data (local only, never commit) ----
+/plan_data.json
+/plan_card.log
+
+# ---- editors / OS ----
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
