@@ -34,6 +34,10 @@ nothing you're working on gets covered.
 It is deliberately **not** a task manager: no projects, no tags, no reminders, no
 account, no sync. Four kinds of plans, one JSON file, done.
 
+> **Also known as** a desktop sticky note, desktop memo or desktop planner —
+> because that is what it looks like. The difference is structure: four kinds of
+> plans with their own behaviour, instead of one blank sheet.
+
 ## Quick start
 
 ```powershell
@@ -105,6 +109,11 @@ different colour.
 | Runs on a stock Python, no install | ✅ | ❌ | ❌ | — |
 | Check-in history / streaks / auto self-review | ✅ | ✅ | ❌ | ❌ |
 | Data in one local file | ✅ | ❌ | ✅ | ✅ |
+
+Unlike a sticky-note app, nothing here is free-form. A daily habit records a
+check-in and keeps its streak; a stage goal counts down to a date you picked from
+a calendar; a long-term item shows a percentage; and "future" is a list that
+deliberately has **no** percentage at all.
 
 ## Features
 
@@ -231,6 +240,9 @@ Plan Card 反过来：**让计划躲不开，又不烦人。** 它贴在壁纸�
 它刻意**不是**一个任务管理器：没有项目、没有标签、没有提醒、没有账号、没有同步。
 四段计划，一个 JSON 文件，就这样。
 
+> **也叫「桌面便签」「桌面便利贴」「桌面备忘录」**——因为它看着就是一张贴在壁纸上的
+> 卡片。区别在结构：四段计划各有各的行为，而不是一张白纸。
+
 ### 快速开始
 
 ```powershell
@@ -257,6 +269,10 @@ python plan_card.pyw
 | 🟢 | **未来** | 以后想做的 | 纯清单，没有百分比 | ❌ |
 
 进度环**只统计阶段 + 长期**（有百分比的那两段）；每日是打卡流程，未来是暂存区。
+
+和便签应用最大的区别是**它不允许你随口写一句就完事**：每日习惯点一次记一天，还会替你
+攒出连续天数；阶段目标倒数到你从日历里选的那天，超期变红；长期事项显示百分比；而
+「未来」这一段故意**没有**百分比。四段各有各的规则——这是它和一张空白便签的全部区别。
 
 ### 打卡是有记忆的
 
