@@ -81,6 +81,19 @@ them. Data lands in `plan_data.json` next to the script.
 | [使用说明](docs/使用说明.md) | 中文完整说明书 |
 | [Architecture](docs/Architecture.md) | how it's built (Win32 tricks, data model, theme engine) |
 
+## About
+
+Plan Card is a small personal tool that got out of hand. It exists because my
+plans kept dying in a notes app I had to remember to open.
+
+- **One person, no company.** No team, no roadmap meetings, no analytics.
+- **Local by design.** No account, no cloud sync, no telemetry — there is no
+  network code in this repo.
+- **Small on purpose.** Standard library only, so a stock Python install runs it.
+- **Feedback welcome.** Open an issue; I read all of them.
+
+If it saves you a minute a day, that's the whole point.
+
 ## Requirements
 
 - **Windows 10 / 11** — the frameless, rounded, translucent window needs Win32
@@ -137,6 +150,17 @@ MIT — see [LICENSE](LICENSE).
 ⭐ 如果它每天帮你省下几秒钟，给个 star 能让更多人发现它。
 
 完整说明见 [docs/使用说明.md](docs/使用说明.md)，技术实现见 [docs/Architecture.md](docs/Architecture.md)。
+
+### 关于
+
+计划表是我自己用的一个小工具，因为我的计划总是死在“需要先想起来打开”的备忘录里。
+
+- **一个人做的，没有公司**：没有团队、没有产品路线会、没有数据统计
+- **本地优先**：没有账号、没有云同步、没有埋点，代码里没有任何联网逻辑
+- **刻意做小**：只用标准库，装个 Python 就能跑
+- **欢迎反馈**：提 issue 就行，我都会看
+
+如果它每天帮你省下一分钟，那就够了。
 
 ### 环境要求
 
