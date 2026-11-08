@@ -2,9 +2,10 @@
 
 # Plan Card
 
-**A frameless Windows desktop plan card — it just sits on your wallpaper.**
+**A Windows desktop plan widget — frameless, always visible on your wallpaper,
+never covers your work.**
 
-Daily check-ins · staged goals · auto self-review · 5 themes
+Daily check-ins · staged goals · auto self-review · 5 themes · zero dependencies
 
 <img src="https://img.shields.io/badge/platform-Windows-0078d4?logo=windows&logoColor=white" alt="Windows">
 <img src="https://img.shields.io/badge/python-3.8%2B-3776ab?logo=python&logoColor=white" alt="Python 3.8+">
@@ -22,8 +23,9 @@ Daily check-ins · staged goals · auto self-review · 5 themes
 
 ## What it is
 
-A single-file Tkinter widget that pins itself to your desktop, below every other
-window, and keeps four kinds of plans visible at once:
+Plan Card is a **Windows desktop widget for planning** — a single-file Tkinter
+app that pins itself to your wallpaper, below every other window, and keeps four
+kinds of plans visible at once.
 
 | | Section | For | Progress |
 |---|---|---|---|
