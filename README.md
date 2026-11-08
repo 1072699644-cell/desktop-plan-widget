@@ -199,8 +199,19 @@ explains each trade-off.
 
 ## About
 
-A small personal tool that got out of hand — it exists because my plans kept
-dying in a notes app I had to remember to open.
+Plan Card is a small personal tool that got out of hand: a **desktop sticky note
+for Windows** that holds a plan instead of a blank page. Think of it as a
+**desktop memo / desktop to-do list** that is always visible — except the notes
+are structured: daily check-ins with streaks, staged goals with calendar
+deadlines, long-term progress and a someday list. Plus a **self-review** that is
+generated from your own data, so nothing has to be written by hand.
+
+It is also a deliberate answer to heavyweight **task managers and habit
+trackers**: no projects, no tags, no accounts, no sync, no subscription.
+**Portable and offline** — one Python file, standard library only, everything in
+a local JSON file. If you were looking for a *Windows desktop widget*, a
+*minimalist planner* or an *open-source sticky notes replacement* for the
+built-in apps, this is meant to be that, minus the accounts.
 
 - **One person, no company.** No team, no roadmap meetings, no analytics.
 - **Local by design.** No account, no cloud, no telemetry, no network code.
@@ -353,7 +364,25 @@ python plan_card.pyw
 - **没有安装程序**——它就是个 Python 脚本，不写注册表、不进任务栏
 - 删掉 `plan_data.json` 就是彻底重置（示例计划会回来）
 
-完整说明：[docs/使用说明.md](docs/使用说明.md) ·
-技术实现：[docs/Architecture.md](docs/Architecture.md)
+### 关于
+
+Plan Card 是一张**桌面便签**——但它不是白纸，装的是计划。你也可以是把它当成一张
+永远可见的**桌面备忘录 / 桌面待办清单**：区别在于内容是结构化的，有每日**打卡**
+（连续天数、近 30 天打卡率）、有**阶段目标**（日历选**期限**、自动倒数）、有**长期**
+进度百分比、有一个「未来」清单，还有一份从你的数据里自动算出来的**自我总结**。
+
+它也是给那些**重量级待办 App 与习惯养成工具**的一个反向答案：没有项目、没有标签、
+没有账号、没有同步、没有订阅。**绿色免安装、离线可用**——一个 Python 文件，只用标准库，
+数据全在一个本地 JSON 里。如果你在找的正是**桌面便签软件**、**极简计划表**、
+**桌面待办工具**，或者想给系统自带便签找一个开源替代，那它就是照着这个做的。
+
+- **一个人做的，没有公司**：没有团队、没有产品路线会、没有数据统计
+- **本地优先**：没有账号、没有云同步、没有埋点，代码里没有任何联网逻辑
+- **刻意做小**：只用标准库，装个 Python 就能跑
+- **欢迎反馈**：提 issue 就行，我都会看
+- **联系方式**：`1072699644 [at] qq.com`（bug 和建议优先提 issue，其它事情发邮件）
 
 ⭐ 如果它每天帮你省下一分钟，给个 star 能让下一个需要它的人找到。
+
+完整说明：[docs/使用说明.md](docs/使用说明.md) ·
+技术实现：[docs/Architecture.md](docs/Architecture.md)

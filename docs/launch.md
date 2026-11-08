@@ -13,7 +13,7 @@
 
 | 项 | 内容 |
 |---|---|
-| **Description** | `A desktop sticky note for plans on Windows: daily check-ins, staged goals, auto self-review, 5 themes. Zero dependencies, single file.` |
+| **Description** | `Desktop sticky note for plans on Windows: daily check-ins with streaks, staged goals with calendar deadlines, a to-do list that resets each morning, an auto-generated self-review, 5 themes. Portable, offline, no account. One Python file, zero dependencies.` |
 | **Topics** | 见下方（18 个，按优先级排） |
 | **Social preview** | 上传 `docs/shots/social-preview.png`（1280×630） |
 | **Template repository** | **取消勾选**（不然仓库顶上会有 "Use this template" 按钮） |
