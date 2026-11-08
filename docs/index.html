@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan Card — a desktop sticky note for plans on Windows</title>
+<meta name="description" content="A frameless Windows desktop sticky note for plans: daily check-ins with streaks, staged goals with calendar deadlines, an auto-generated self-review and 5 themes. One Python file, zero dependencies, no account.">
+<link rel="canonical" href="https://1072699644-cell.github.io/desktop-plan-widget/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Plan Card — a desktop sticky note for plans on Windows">
+<meta property="og:description" content="Daily check-ins with streaks, staged goals with deadlines, auto self-review, 5 themes. One Python file, zero dependencies, local JSON.">
+<meta property="og:image" content="shots/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plan Card — a desktop sticky note for plans">
+<meta name="twitter:description" content="Frameless Windows desktop plan card. Zero dependencies, one file.">
+<meta name="twitter:image" content="shots/social-preview.png">
+<style>
+  :root{
+    --bg:#0b1018; --panel:#121722; --line:#222b3a;
+    --fg:#eef4ff; --sub:#93a3ba; --dim:#5f7188;
+    --acc:#e7c18a; --ok:#6fd39a; --cyan:#00e5ff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.65 "Segoe UI",-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  header{border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+  .dot{width:9px;height:9px;border-radius:2px;background:var(--acc)}
+  .nav a{color:var(--sub);font-size:14px;margin-left:20px}
+  .nav a:hover{color:var(--fg)}
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:72px 0 56px}
+  h1{font-size:44px;line-height:1.15;margin:0 0 16px;letter-spacing:-.5px}
+  .lead{font-size:19px;color:var(--sub);margin:0 0 26px}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+  .badge{font-size:12px;color:var(--sub);border:1px solid var(--line);
+         border-radius:999px;padding:4px 12px;background:var(--panel)}
+  .cta{display:flex;flex-wrap:wrap;gap:12px}
+  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:600;font-size:15px}
+  .btn.p{background:var(--acc);color:#20160a}
+  .btn.p:hover{text-decoration:none;filter:brightness(1.06)}
+  .btn.s{border:1px solid var(--line);color:var(--fg);background:transparent}
+  .btn.s:hover{text-decoration:none;background:var(--panel)}
+  .shot{text-align:center}
+  .shot img{width:100%;max-width:380px;border-radius:14px;
+            box-shadow:0 24px 60px rgba(0,0,0,.55)}
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  h2{font-size:26px;margin:0 0 8px;letter-spacing:-.2px}
+  .sub{color:var(--sub);margin:0 0 32px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{margin:0 0 8px;font-size:16px}
+  .card p{margin:0;color:var(--sub);font-size:14.5px}
+  .card .k{display:inline-block;font-size:12px;color:var(--acc);
+           border:1px solid #3a3222;border-radius:6px;padding:1px 7px;margin-bottom:10px}
+  .wide{text-align:center;margin-top:8px}
+  .wide img{width:100%;border-radius:14px;border:1px solid var(--line)}
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  ol.steps li{position:relative;padding:18px 20px 18px 60px;background:var(--panel);
+              border:1px solid var(--line);border-radius:12px;color:var(--sub)}
+  ol.steps li::before{counter-increment:s;content:counter(s);
+    position:absolute;left:18px;top:18px;width:26px;height:26px;border-radius:50%;
+    background:var(--acc);color:#20160a;font-weight:700;font-size:14px;
+    display:flex;align-items:center;justify-content:center}
+  ol.steps b{color:var(--fg);font-weight:600}
+  pre{background:#0e131c;border:1px solid var(--line);border-radius:10px;
+      padding:14px 16px;overflow:auto;font-size:14px;color:#cfe0f5;margin:12px 0 0}
+  code{font-family:ui-monospace,Consolas,"Courier New",monospace}
+  details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+          margin-bottom:10px;background:var(--panel)}
+  summary{cursor:pointer;font-weight:600;color:var(--fg)}
+  details p{color:var(--sub);margin:10px 0 0;font-size:14.5px}
+  footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--dim);font-size:14px}
+  .foot{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between}
+  .lang{float:right;font-size:13px;color:var(--dim);cursor:pointer;
+        border:1px solid var(--line);border-radius:8px;padding:3px 10px;background:var(--panel)}
+  .zh{display:none}
+  body.cn .zh{display:revert}
+  body.cn .en{display:none}
+  @media (max-width:820px){
+    .hero{grid-template-columns:1fr;padding:48px 0 40px;gap:32px}
+    h1{font-size:34px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="brand"><span class="dot"></span>Plan Card</div>
+    <nav>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a>
+      <a href="#install" class="en">Install</a><a href="#install" class="zh">安装</a>
+      <a href="#faq" class="en">FAQ</a><a href="#faq" class="zh">常见问题</a>
+      <span class="lang" id="langBtn">中文</span>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1 class="en">A desktop sticky note<br>for plans</h1>
+      <h1 class="zh">一张贴在桌面上的便签<br>但它是四段计划</h1>
+      <p class="lead en">Frameless, always visible on your wallpaper, and it never
+        covers your work. One Python file, zero dependencies, no account.</p>
+      <p class="lead zh">无边框、一直看得见、不挡任何窗口。单个 Python 文件，
+        零第三方依赖，不需要账号。</p>
+      <div class="badges">
+        <span class="badge">Windows 10 / 11</span>
+        <span class="badge">Python 3.8+</span>
+        <span class="badge">0 dependencies</span>
+        <span class="badge">MIT</span>
+        <span class="badge en">EN / 中文</span>
+        <span class="badge zh">中 / English</span>
+      </div>
+      <div class="cta">
+        <a class="btn p" href="https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip">
+          <span class="en">Download for Windows</span><span class="zh">下载（Windows）</span>
+        </a>
+        <a class="btn s" href="https://github.com/1072699644-cell/desktop-plan-widget">
+          <span class="en">View source</span><span class="zh">查看源码</span>
+        </a>
+      </div>
+    </div>
+    <div class="shot">
+      <img data-src-en="shots/demo-en.gif" data-src-zh="shots/demo.gif"
+           src="shots/demo-en.gif" alt="Plan Card: check in, open the self-review, switch themes">
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2 class="en">Four kinds of plans, four behaviours</h2>
+    <h2 class="zh">四段计划，四种行为</h2>
+    <p class="sub en">They are separate because they behave differently — that is the whole design.</p>
+    <p class="sub zh">四段是因为它们行为不一样，这才是设计的核心。</p>
+    <div class="grid">
+      <div class="card"><span class="k">Daily</span>
+        <h3 class="en">Check in, keep the streak</h3><h3 class="zh">打卡，留下连续天数</h3>
+        <p class="en">One button per habit. Every click is recorded, so you get a
+          streak and a 30-day rate. The list resets each morning; the history does not.</p>
+        <p class="zh">一条习惯一个按钮。每次点击都记录，能看到连续天数和近 30 天打卡率。
+          清单每天早上重置，记录不会。</p></div>
+      <div class="card"><span class="k">Stage</span>
+        <h3 class="en">Count down to a date</h3><h3 class="zh">倒数到一个日期</h3>
+        <p class="en">Pick a deadline from a calendar — no typing dates. The row shows
+          <code>12d</code>, <code>Today</code> or <code>3d late</code>.</p>
+        <p class="zh">点日历选期限，不用手打日期。行内显示
+          <code>剩 12 天</code>、<code>今天</code> 或 <code>逾期 3 天</code>。</p></div>
+      <div class="card"><span class="k">Long-term</span>
+        <h3 class="en">Ongoing, with a percentage</h3><h3 class="zh">长期，带百分比</h3>
+        <p class="en">For things without a deadline. Shows how far along you are.</p>
+        <p class="zh">不设期限的事，显示完成百分比。</p></div>
+      <div class="card"><span class="k">Future</span>
+        <h3 class="en">A parking lot</h3><h3 class="zh">暂存区</h3>
+        <p class="en">Someday / maybe. Deliberately no percentage — it is not work yet.</p>
+        <p class="zh">以后想做的。故意不给百分比——它还不是任务。</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="en">A self-review you never write</h2>
+    <h2 class="zh">一份不用你写的自我总结</h2>
+    <p class="sub en">Collapsed to one line, expandable. Days logged, check-ins, daily
+      average, best streak — computed from your own data, by day / week / month.</p>
+    <p class="sub zh">默认收起一行，点开看有记录天数、打卡次数、日均完成、最长连续——
+      全部由你的数据算出来，可切日 / 周 / 月。</p>
+    <div class="wide"><img data-src-en="shots/history-en.png" data-src-zh="shots/history.png"
+      src="shots/history-en.png" alt="Check-in history: check-ins, streak, 30-day rate"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="en">Five themes, not five colour swaps</h2>
+    <h2 class="zh">五套主题，不只是换色号</h2>
+    <p class="sub en">Each theme also changes the font, the button shape and the section
+      markers. Cute · Minimal · Ink · Tech · Chinese.</p>
+    <p class="sub zh">每套主题连字体、按钮形态、段标识都换。可爱 · 极简 · 水墨 · 科技 · 中式。</p>
+    <div class="wide"><img data-src-en="shots/hero-en.png" data-src-zh="shots/hero.png"
+      src="shots/hero-en.png" alt="The same card in five themes"></div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2 class="en">Install</h2><h2 class="zh">安装</h2>
+    <p class="sub en">No installer, no pip, no background service.</p>
+    <p class="sub zh">没有安装程序、不需要 pip、没有后台服务。</p>
+    <ol class="steps">
+      <li><b class="en">Install Python 3.8+</b><b class="zh">装 Python 3.8+</b><br>
+        <span class="en">tkinter is bundled with the Windows installer.</span>
+        <span class="zh">Windows 版自带 tkinter。</span></li>
+      <li><b class="en">Download and unzip</b><b class="zh">下载并解压</b><br>
+        <span class="en">Keep <code>plan_card.pyw</code> and the <code>tools/</code> folder together.</span>
+        <span class="zh"><code>plan_card.pyw</code> 和 <code>tools/</code> 文件夹要放在一起。</span></li>
+      <li><b class="en">Double-click <code>plan_card.pyw</code></b><b class="zh">双击 <code>plan_card.pyw</code></b><br>
+        <span class="en">Sample plans load on first run. Your data stays in <code>plan_data.json</code> next to it.</span>
+        <span class="zh">首次启动载入示例计划。数据写在同目录的 <code>plan_data.json</code>。</span></li>
+    </ol>
+    <pre><code id="clone">git clone https://github.com/1072699644-cell/desktop-plan-widget.git
+cd desktop-plan-widget
+python plan_card.pyw</code></pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="en">Why it looks like this</h2><h2 class="zh">为什么长这样</h2>
+    <div class="grid">
+      <div class="card"><h3 class="en">Below everything</h3><h3 class="zh">沉在下面</h3>
+        <p class="en">No title bar, no taskbar entry, no topmost flag — it never covers
+          the window you are working in.</p>
+        <p class="zh">没有标题栏、不占任务栏、不置顶——永远不遮住你正在用的窗口。</p></div>
+      <div class="card"><h3 class="en">Local first</h3><h3 class="zh">本地优先</h3>
+        <p class="en">One JSON file. No account, no cloud, no telemetry, no network code
+          in the repository.</p>
+        <p class="zh">就一个 JSON 文件。没有账号、没有云、没有埋点，仓库里没有一行联网代码。</p></div>
+      <div class="card"><h3 class="en">Small on purpose</h3><h3 class="zh">刻意做小</h3>
+        <p class="en">Standard library only, so a stock Python install can run it.
+          Not a task manager, by design.</p>
+        <p class="zh">只用标准库，装个 Python 就能跑。刻意不是任务管理器。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>FAQ</h2>
+    <details><summary class="en">Does it sync between machines?</summary>
+      <summary class="zh">会同步到别的电脑吗？</summary>
+      <p class="en">No. There is one <code>plan_data.json</code> — copy it yourself if you move.</p>
+      <p class="zh">不会。只有一个 <code>plan_data.json</code>，想搬就自己拷过去。</p></details>
+    <details><summary class="en">macOS or Linux?</summary>
+      <summary class="zh">支持 macOS / Linux 吗？</summary>
+      <p class="en">Not supported. The frameless rounded translucent window relies on Win32
+        (<code>SetWindowRgn</code>, layered windows).</p>
+      <p class="zh">不支持。无边框圆角半透明依赖 Win32（<code>SetWindowRgn</code>、分层窗口）。</p></details>
+    <details><summary class="en">Does it phone home?</summary>
+      <summary class="zh">会联网吗？</summary>
+      <p class="en">There is no network code in the repository at all.</p>
+      <p class="zh">仓库里没有任何联网代码。</p></details>
+    <details><summary class="en">Does it start with Windows?</summary>
+      <summary class="zh">会开机自启吗？</summary>
+      <p class="en">Not by itself — put a shortcut in <code>shell:startup</code>.</p>
+      <p class="zh">不会。想自启就把快捷方式放进 <code>shell:startup</code>。</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>MIT licensed · made by one person · <a href="mailto:1072699644@qq.com">1072699644 [at] qq.com</a></div>
+    <div>
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget">GitHub</a> ·
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/Usage.md">Usage</a> ·
+      <a href="https://github.com/1072699644-cell/desktop-plan-widget/blob/main/docs/使用说明.md">使用说明</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var btn = document.getElementById('langBtn');
+  function setCN(on){
+    document.body.classList.toggle('cn', on);
+    btn.textContent = on ? 'English' : '中文';
+    document.documentElement.lang = on ? 'zh-CN' : 'en';
+    var pics = document.querySelectorAll('img[data-src-en]');
+    for (var i = 0; i < pics.length; i++) {
+      var src = on ? pics[i].getAttribute('data-src-zh')
+                   : pics[i].getAttribute('data-src-en');
+      if (src && pics[i].getAttribute('src') !== src) { pics[i].src = src; }
+    }
+    try { localStorage.setItem('pc-lang', on ? 'zh' : 'en'); } catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    setCN(!document.body.classList.contains('cn'));
+  });
+  var saved = null;
+  try { saved = localStorage.getItem('pc-lang'); } catch(e){}
+  if (saved === 'zh' || (!saved && (navigator.language||'').toLowerCase().indexOf('zh') === 0)) {
+    setCN(true);
+  }
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Plan Card",
+  "applicationCategory": "ProductivityApplication",
+  "operatingSystem": "Windows 10, Windows 11",
+  "description": "A frameless Windows desktop sticky note for plans: daily check-ins with streaks, staged goals with calendar deadlines, an auto-generated self-review and five themes. One Python file, zero dependencies.",
+  "url": "https://1072699644-cell.github.io/desktop-plan-widget/",
+  "downloadUrl": "https://github.com/1072699644-cell/desktop-plan-widget/archive/refs/heads/main.zip",
+  "license": "https://github.com/1072699644-cell/desktop-plan-widget/blob/main/LICENSE",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "screenshot": "shots/hero.png"
+}
+</script>
+</body>
+</html>

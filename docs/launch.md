@@ -45,6 +45,29 @@ dark-mode
 
 ---
 
+## 0.5 开启落地页（GitHub Pages）
+
+仓库里已经有 `docs/index.html`（中英双语、含动图、SEO meta、结构化数据）。
+开启只要点几下：
+
+```
+仓库 → Settings → 左侧 Pages
+→ Build and deployment · Source 选 "Deploy from a branch"
+→ Branch 选 main，目录选 /docs → Save
+```
+
+1–2 分钟后访问：
+
+```
+https://1072699644-cell.github.io/desktop-plan-widget/
+```
+
+**为什么值得开**：GitHub 仓库页在 Google 里权重高，但仓库内部搜索要跟几百个仓库抢；
+独立页面能被 Google 单独收录，等于多一个入口。而且分享出去时这个域名比 GitHub 链接
+更像一个产品。
+
+---
+
 ## 1. 定位：为什么打"便签"这张牌
 
 2026-11 在 GitHub 搜索 API 上的实测：
@@ -67,17 +90,24 @@ dark-mode
 
 ---
 
-## 2. 时间表
+## 2. 时间表、地址与门槛
 
-| 时间 | 平台 |
-|---|---|
-| 发布当天白天 | V2EX「分享创造」· 即刻 · 少数派 |
-| 当天 **21:00–23:00**（北京） | Show HN —— 对应美东上午 8–10 点 |
-| +1 天 | r/SideProject · r/Windows10 |
-| +2 天 | Product Hunt（需要预热） |
-| +3 天起 | 给 awesome 列表提 PR |
+| 时间 | 平台 | 地址 | 门槛 / 坑 |
+|---|---|---|---|
+| 当天白天 | **即刻** | https://web.okjike.com | 手机号注册即可，最容易发 |
+| 当天白天 | **小红书** | App 内发（图文 6–9 张） | 门槛低，适合这类"桌面效率工具" |
+| 当天下午 | **V2EX · 分享创造** | https://www.v2ex.com/new | 需邀请码注册；新号发主题可能受限，先完善资料、评论几句 |
+| 当天下午 | **少数派 · Matrix** | https://sspai.com/matrix | 需账号；写得好会被编辑推荐 |
+| 当天 **21:00–23:00** | **Show HN** | https://news.ycombinator.com/submit | 对应美东上午 8–10 点。Title 必须 `Show HN:` 开头，URL 填仓库地址，发完立刻贴作者评论 |
+| +1 天 | **r/SideProject** | https://www.reddit.com/r/SideProject/submit | 新号常被自动删；10 分钟没显示就发 modmail 请求人工通过 |
+| +1 天 | **r/Windows10** | https://www.reddit.com/r/Windows10/submit | 同上，侧重点写"桌面挂件" |
+| +2 天 | **Product Hunt** | https://www.producthunt.com/posts/new | 门槛最高，需要账号和 Ship 权限，没追随者效果一般 |
+| +3 天起 | **awesome 列表 PR** | 见第 7 节 | 长期免费流量，性价比最高 |
 
 一天最多发两个平台。同一天全平台铺开会被当营销号。
+
+**先发门槛低的**：万一文案有让人困惑的地方（比如"它到底是不是便签"），先在即刻/小红书
+这种小流量池里试出来，改完再去 HN——HN 只有一次第一印象。
 
 ---
 
