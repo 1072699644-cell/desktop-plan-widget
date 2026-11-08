@@ -170,6 +170,8 @@ dying in a notes app I had to remember to open.
 - **Local by design.** No account, no cloud, no telemetry, no network code.
 - **Small on purpose.** Standard library only.
 - **Feedback welcome.** Open an issue; I read all of them.
+- **Contact.** 1072699644 `[at]` qq.com — issues are preferred for bugs and
+  feature requests; email me for anything else.
 
 ⭐ If it saves you a minute a day, a star helps the next person find it.
 
@@ -286,7 +288,15 @@ python plan_card.pyw
 - **不会自己加到开机启动**：想开机自启，把快捷方式放进 `shell:startup`，
   具体见 [使用说明](docs/使用说明.md)
 
-完整说明：[docs/使用说明.md](docs/使用说明.md) ·
-技术实现：[docs/Architecture.md](docs/Architecture.md)
+### 关于
+
+计划表是我自己用的一个小工具，因为我的计划总是死在“需要先想起来打开”的备忘录里。
+一个人做的，没有公司、没有统计、没有联网代码。
+
+- **欢迎反馈**：提 issue 就行，我都会看
+- **联系方式**：1072699644 `[at]` qq.com（bug 和建议优先提 issue，其它事情发邮件）
 
 ⭐ 如果它每天帮你省下一分钟，给个 star 能让下一个需要它的人找到。
+
+完整说明：[docs/使用说明.md](docs/使用说明.md) ·
+技术实现：[docs/Architecture.md](docs/Architecture.md)
